@@ -1,0 +1,32 @@
+.base {
+  &[data-inactive] {
+    color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-white));
+  }
+}
+
+.buttonRoot {
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  color: light-dark(var(--mantine-color-main-6), var(--mantine-color-main-3));
+  &:hover {
+    color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-white)) !important;
+  }
+}
+
+.icon {
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-white));
+  &:hover {
+    color: light-dark(var(--mantine-color-green-8), var(--mantine-color-white)) !important;
+  }
+}
+
+.buttonInner {
+  display: block;
+}
+
+.childrenWrapper {
+  border-left: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.chevron {
+  transition: transform 200ms ease;
+}
