@@ -1,6 +1,9 @@
 import { IconBell, IconHome } from '@tabler/icons-react';
 import SecurityProvider from './features/auth/security/SecurityProvider';
 import { Home, WrappedDataGrid } from './features/pages';
+import Competitions from "@/features/pages/Competitions.jsx";
+import Competition from "@/features/pages/Competition.jsx";
+import AdminHome from "@/features/pages/AdminHome.jsx";
 
 export const BASE_PATH = new URL(document.baseURI).pathname;
 
@@ -15,6 +18,12 @@ export const NAVIGATION_ITEM_SIZE = '4rem';
 export const USER_MENU_HEIGHT = '5rem';
 
 export const routes = {
+  adminHome: {
+    path: '/admin/home',
+    name: 'Home',
+    Icon: IconHome,
+    Element: AdminHome,
+  },
   home: {
     path: '/',
     name: 'Home',
@@ -41,6 +50,20 @@ export const routes = {
     resource_name: 'examples',
     name: 'Example without icon',
     Element: WrappedDataGrid,
+  },
+  competitions: {
+    path: '/competitions',
+    Icon: IconBell,
+    resource_name: 'competitions',
+    name: 'Competitions',
+    Element: Competitions
+  },
+  competition: {
+    path: '/competition/:competitionId',
+    Icon: IconBell,
+    resource_name: 'competition',
+    name: 'Competition',
+    Element: Competition
   },
 };
 

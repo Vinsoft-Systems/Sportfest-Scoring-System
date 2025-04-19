@@ -1,5 +1,5 @@
 import { useAuth } from 'fastapi-rtk';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import {Navigate, Route, Routes, useLocation} from 'react-router-dom';
 import './App.css';
 import MainFrame from './common/Base/MainFrame';
 import { routes, security } from './constants';
@@ -9,9 +9,16 @@ const loginPath = '/login';
 
 function Wrapper() {
   const { user, loading } = useAuth();
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
-  if (!user && loading) return;
-  return user ? <MainFrame /> : <Navigate to={loginPath} />;
+  if (loading) return;
+
+  if (!isAdminRoute || user) {
+    return <MainFrame showNavbar={isAdminRoute} />;
+  }
+
+  return <Navigate to={loginPath} />;
 }
 
 function App() {

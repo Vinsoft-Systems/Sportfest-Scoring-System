@@ -3,7 +3,7 @@ import useSize from '@/hooks/useSize';
 import { Group, rem, Text } from '@mantine/core';
 import { useElementSize } from '@mantine/hooks';
 
-const imgSrc = `./static/logo.png`;
+const imgSrc = `./static/logo.jpeg`;
 
 export default function Logo({ ...props }) {
   const { logoHeight, isNavbarOpened, navbarWidth } = useSize();
