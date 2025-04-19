@@ -1,19 +1,19 @@
-# FastAPI Web example Application
+# Sportfest-Scoring-System
 
-This is a simple FastAPI-rtk web example application.
+This project is dedicated to the Sportfest Scoring System, which is a web application for managing and scoring sports events. It is built using FastAPI for the backend and React for the frontend.
 
 ## How to run the project
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/dttctcs/fastapi-rtk-skeleton.git
+   git clone https://github.com/Vinsoft-Systems/Sportfest-Scoring-System
    ```
 
 2. Change into the project directory:
 
    ```bash
-   cd fastapi-rtk-skeleton
+   cd Sportfest-Scoring-System
    ```
 
 3. Create a virtual environment:
@@ -47,7 +47,7 @@ This is a simple FastAPI-rtk web example application.
    fastapi dev --port 8080
    ```
 
-7 Go to the `webapp` directory and run the following command to start the web application:
+7 Go to the `frontend` directory and run the following command to start the web application:
 
 ```bash
 pnpm install
@@ -58,44 +58,10 @@ pnpm run dev
 
 ## How to add more pages?
 
-1. Create a new page component in the `webapp/src/pages` directory. You can use the `Home` or `Examples` component as a template.
+1. Create a new page component in the `frontend/src/pages` directory. You can use the `Home` or `Examples` component as a template.
 
-2. Add it to `index.js` in the `webapp/src/pages` directory.
+2. Add it to `index.js` in the `frontend/src/pages` directory.
 
-3. Add the route to the `constants.js` file in the `webapp/src` directory.
+3. Add the route to the `constants.js` file in the `frontend/src` directory.
 
 4. Your new page should now be available at the navigation bar.
-
-## How to add user?
-
-1. For admin, run the following command to create a new user:
-
-```bash
-fastapi-rtk security create-admin
-```
-
-or
-
-```bash
-fastapi-rtk security create-admin --username admin --password admin
-```
-
-2. For normal user, run the following command to create a new user:
-
-```bash
-fastapi-rtk security create-user
-```
-
-or
-
-```bash
-fastapi-rtk security create-user --username user --password user
-```
-
-## Contributing
-
-Contributions are welcome! If you find any issues or have suggestions, please open an issue or submit a pull request.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).

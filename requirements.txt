@@ -1,1 +1,2 @@
-fastapi-rtk==0.0.59
+fastapi-rtk
+psycopg2-binary

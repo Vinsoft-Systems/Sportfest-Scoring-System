@@ -1,12 +1,21 @@
-from fastapi_rtk.api import ModelRestApi, SQLAInterface
+from fastapi_rtk import ModelRestApi, SQLAInterface
 
-from .app import toolkit
-from .models import *
-
-
-class ExampleApi(ModelRestApi):
-    resource_name = "examples"
-    datamodel = SQLAInterface(Example)
+from app.models import Competition, Match, Team
+from app.main import toolkit
 
 
-toolkit.add_api(ExampleApi)
+class CompetitionAPI(ModelRestApi):
+    datamodel = SQLAInterface(Competition)
+
+
+class TeamAPI(ModelRestApi):
+    datamodel = SQLAInterface(Team)
+
+
+class MatchAPI(ModelRestApi):
+    datamodel = SQLAInterface(Match)
+
+
+toolkit.add_api(CompetitionAPI)
+toolkit.add_api(TeamAPI)
+toolkit.add_api(MatchAPI)
