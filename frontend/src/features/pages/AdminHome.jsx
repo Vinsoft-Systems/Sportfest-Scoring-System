@@ -1,9 +1,10 @@
-import { Center, Title } from '@mantine/core';
+import { Title } from '@mantine/core';
+import { ApiProvider } from 'fastapi-rtk';
 
 export default function AdminHome() {
   return (
-    <Center>
+    <ApiProvider resource_name='adminhome'>
       <Title order={1}>AdminHome</Title>
-    </Center>
+    </ApiProvider>
   );
 }

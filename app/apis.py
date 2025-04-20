@@ -6,6 +6,11 @@ from app.main import toolkit
 
 class CompetitionAPI(ModelRestApi):
     datamodel = SQLAInterface(Competition)
+    add_columns = [
+        "name",
+        "description",
+        "sport_branches",
+    ]
 
 
 class TeamAPI(ModelRestApi):
