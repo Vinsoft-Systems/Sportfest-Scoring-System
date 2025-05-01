@@ -1,6 +1,6 @@
 // import '@mantine/charts/styles.css';
 import '@mantine/core/styles.css';
-// import '@mantine/dates/styles.css';
+import '@mantine/dates/styles.css';
 // import '@mantine/dropzone/styles.css';
 // import '@mantine/notifications/styles.css';
 // import '@mantine/tiptap/styles.css';
@@ -11,7 +11,7 @@ import { Provider } from 'fastapi-rtk';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider as ReduxProvider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom/dist/index.js';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import { BASE_PATH } from './constants';
 import './index.css';

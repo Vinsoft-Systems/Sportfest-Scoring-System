@@ -2,7 +2,7 @@ import { Center, Title } from '@mantine/core';
 import { ApiProvider, useApi } from 'fastapi-rtk';
 
 function Data(){
-  const { data } = useApi();
+  const { data } = useApi("competition");
   return (
     <div>
       <h1>Data</h1>
@@ -14,12 +14,10 @@ function Data(){
 
 export default function Home() {
 
-
   return (
-
     <Center>
       <Title order={1}>Home</Title>
-      <ApiProvider resource_name='competitions'>
+      <ApiProvider resource_name='competition'>
         <Data />
       </ApiProvider>
     </Center>

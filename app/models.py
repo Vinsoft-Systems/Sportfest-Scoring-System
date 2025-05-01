@@ -1,7 +1,13 @@
 from datetime import datetime
-from fastapi_rtk import Model
+import enum
+from fastapi_rtk import JSONFileColumns, Model
 from sqlalchemy import JSON, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+
+
+class JSONTags(JSONFileColumns):
+    cache_ok = True
+    pass
 
 
 class AuditMixin:
@@ -17,6 +23,9 @@ class AuditMixin:
     #     backref="competitions",
     # )
 
+    def __repr__(self):
+        return f"{self.name}"
+
 
 class Competition(Model, AuditMixin):
     __tablename__ = "competitions"
@@ -24,7 +33,7 @@ class Competition(Model, AuditMixin):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str]
     description: Mapped[str]
-    sport_branches: Mapped[dict] = mapped_column(JSON)
+    sport_branches: Mapped[list[str]] = mapped_column(JSONTags)
 
     teams: Mapped[list["Team"]] = relationship(
         "Team",
@@ -43,7 +52,8 @@ class Team(Model, AuditMixin):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str]
     description: Mapped[str]
-    sport_branch: Mapped[str]
+    sport_branch: Mapped[str]  # Ambil dari Competition
+
     players: Mapped[dict] = mapped_column(JSON)
     # profile_picture = Mapped[str]
 
@@ -67,6 +77,13 @@ class Team(Model, AuditMixin):
     )
 
 
+class StatusEnum(enum.Enum):
+    SCHEDULED = "Scheduled"
+    IN_PROGRESS = "In Progress"
+    COMPLETED = "Completed"
+    CANCELLED = "Cancelled"
+
+
 class Match(Model, AuditMixin):
     __tablename__ = "matches"
 
@@ -75,8 +92,10 @@ class Match(Model, AuditMixin):
     description: Mapped[str]
     date: Mapped[datetime]
     sport_branch: Mapped[str]
-    status: Mapped[str]
-    score_list: Mapped[dict] = mapped_column(JSON)
+    status: Mapped[StatusEnum] = mapped_column(
+        default=StatusEnum.SCHEDULED, nullable=False
+    )
+    score_list: Mapped[dict] = mapped_column(JSON, nullable=True)
 
     competition_id: Mapped[int] = mapped_column(
         ForeignKey("competitions.id"), nullable=False

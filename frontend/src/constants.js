@@ -1,9 +1,10 @@
-import { IconBell, IconHome } from '@tabler/icons-react';
+import { IconHome, IconShirtFilled, IconCampfireFilled, IconPuzzleFilled } from '@tabler/icons-react';
 import SecurityProvider from './features/auth/security/SecurityProvider';
-import { Home, WrappedDataGrid } from './features/pages';
-import Competitions from "@/features/pages/Competitions.jsx";
-import Competition from "@/features/pages/Competition.jsx";
-import AdminHome from "@/features/pages/AdminHome.jsx";
+import { Home } from './features/pages';
+import AdminHome from "@/features/pages/admin/AdminHome.jsx";
+import AdminMatches from './features/pages/admin/AdminMatches';
+import AdminTeams from '@/features/pages/admin/AdminTeams.jsx';
+import AdminCompetitions from '@/features/pages/admin/AdminCompetitions.jsx';
 
 export const BASE_PATH = new URL(document.baseURI).pathname;
 
@@ -18,53 +19,40 @@ export const NAVIGATION_ITEM_SIZE = '4rem';
 export const USER_MENU_HEIGHT = '5rem';
 
 export const routes = {
+  home: {
+    path: '/',
+    name: 'Home',
+    Icon: IconHome,
+    Element: Home,
+    isPublic: true,
+  },
   adminHome: {
     path: '/admin/home',
     name: 'Home',
     Icon: IconHome,
     Element: AdminHome,
   },
-  home: {
-    path: '/',
-    name: 'Home',
-    Icon: IconHome,
-    Element: Home,
-  },
-  examples: {
-    path: '/examples',
-    Icon: IconBell,
-    resource_name: 'examples',
-    name: 'Example Page',
-    Element: WrappedDataGrid,
-  },
-  examples2: {
-    path: '/examples2',
-    Icon: IconBell,
-    resource_name: 'examples',
-    name: 'Example Page but text is longer',
-    Element: WrappedDataGrid,
-  },
-  examples3: {
-    path: '/examples3',
-    // Icon: IconBell,
-    resource_name: 'examples',
-    name: 'Example without icon',
-    Element: WrappedDataGrid,
-  },
-  competitions: {
-    path: '/competitions',
-    Icon: IconBell,
-    resource_name: 'competitions',
-    name: 'Competitions',
-    Element: Competitions
-  },
-  competition: {
-    path: '/competition/:competitionId',
-    Icon: IconBell,
+  adminCompetitions: {
+    path: '/admin/competitions',
+    Icon: IconCampfireFilled,
     resource_name: 'competition',
-    name: 'Competition',
-    Element: Competition
+    name: 'Competitions',
+    Element: AdminCompetitions
   },
+  adminTeams: {
+    path: '/admin/teams',
+    Icon: IconShirtFilled,
+    resource_name: 'team',
+    name: 'Teams',
+    Element: AdminTeams
+  },
+  adminMatches: {
+    path: '/admin/matches',
+    Icon: IconPuzzleFilled,
+    resource_name: 'match',
+    name: 'Matches',
+    Element: AdminMatches
+  }
 };
 
 export const security = {
