@@ -1,4 +1,4 @@
-import { Card, Text, Flex, Divider, Pill, Grid } from '@mantine/core'
+import { Card, Text, Flex, Divider, Pill, Grid, Group } from '@mantine/core'
 import { formatDate } from '../Base/utils/utils';
 import { IconPointFilled } from '@tabler/icons-react'
 
@@ -7,19 +7,34 @@ export default function MatchCard({ match, onClick }) {
     const setPillColor = (status) => {
         switch(status) {
             case "Scheduled":
-                return " #64D9FF";
+                return "#0072C6"; 
             case "In Progress":
-                return " #00E200";
+                return "#34C759"; 
             case "Completed":
-                return " #7B8089"; 
+                return "#5A6270";
             case "Cancelled":
-                return " #FF2A04";
+                return "#E03131"; 
             default:
-                return " #7B8089";
+                return "#5A6270"; 
+        }
+    }
+    
+    const setPillBgColor = (status) => {
+        switch(status) {
+            case "Scheduled":
+                return "rgba(0, 114, 198, 0.15)"; 
+            case "In Progress":
+                return "rgba(52, 199, 89, 0.15)";
+            case "Completed":
+                return "rgba(90, 98, 112, 0.15)";
+            case "Cancelled":
+                return "rgba(224, 49, 49, 0.15)";
+            default:
+                return "rgba(90, 98, 112, 0.15)";
         }
     }
 
-    const { date, sport_branch, status, score_list, team_a, team_b, competition } = match;
+    const { name, description, date, sport_branch, status, score_list, team_a, team_b, competition } = match;
     return (
         <>
         <Card 
@@ -32,24 +47,32 @@ export default function MatchCard({ match, onClick }) {
             onClick={onClick}
             style={{cursor: 'pointer'}}
         >  
-            <Flex direction="row" align="center" pb="lg" justify={'space-between'}>
+            <Flex direction="row" align="center" pb="lg" justify={'space-between'} withBorder>
                 <Flex gap="sm">
                     <Text size="12px">{formatDate(date)}</Text>
                 </Flex>
 
-                <Pill>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Pill 
+                    style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} 
+                    bg={setPillBgColor(status)}
+                    >
+                    <Flex align="center" gap="xs">
                         <IconPointFilled size={16} color={setPillColor(status)} />
-                        {status}
-                    </span>
+                        <Text size="xs" fw={600} c={setPillColor(status)}>{status}</Text>
+                    </Flex>
                 </Pill>
             </Flex>
 
             <Flex direction="row" align="center" pb="sm" gap="xs" justify={'center'}>
                 <Text  size="12px" fw={600}>{sport_branch}</Text>
                 <Divider orientation="vertical" size="sm"/>
-                <Text  size="12px" fw={600}>{match.name}</Text>
+                <Text  size="12px" fw={600}>{name}</Text>
             </Flex>
+
+            {/* Lapangan */}
+            {/* <Flex direction="row" align="center" pb="sm" gap="xs" justify={'center'}>
+                <Text  size="12px" fw={600}>{description}</Text>
+            </Flex> */}
 
             <Grid pb="md">
                 <Grid.Col span="auto" ><Text fw={600} ta="center">{team_a.name}</Text></Grid.Col>
