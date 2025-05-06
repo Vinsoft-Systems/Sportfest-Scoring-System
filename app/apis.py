@@ -91,6 +91,7 @@ class MatchAPI(ModelRestApi):
         "date",
         "competition",
         "sport_branch",
+        "name",
         "status",
         "team_a",
         "team_b",

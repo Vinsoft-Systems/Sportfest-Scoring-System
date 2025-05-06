@@ -51,6 +51,7 @@ function MatchData() {
         <p>No matches available</p>
       )}
     </Flex>
+
   );
 }
 
