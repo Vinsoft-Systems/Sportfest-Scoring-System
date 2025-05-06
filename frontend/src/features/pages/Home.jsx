@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect, useNavigate } from 'react';
-import { Center, Flex } from '@mantine/core';
+import { Center, Flex, SimpleGrid, Title } from '@mantine/core';
 import { ApiProvider, useApi } from 'fastapi-rtk';
 import  MatchCard  from '@/common/components/MatchCard'
 
@@ -30,10 +30,15 @@ function MatchData() {
   if (!matches) return <p>No match data available</p>;
 
   return (
-    <Flex direction="column" align="center" gap="md">
-      <h1>Ongoing Matches</h1>
+    <Flex direction="column" align="center" gap="md" w="100%" maw="1200px" px="md">
+      <Title order={1} ta="center" mb="md">Ongoing Matches</Title>
       {matches.result && matches.result.length > 0 ? (
-        <div className="match-cards">
+        <SimpleGrid 
+          cols={{ base: 1, sm: 2, md: 3 }}
+          spacing={{ base: 'md', sm: 'lg' }}
+          verticalSpacing={{ base: 'md', sm: 'lg' }}
+          w="100%"
+        >
           {matches.result.map((match) => (
             <MatchCard 
               key={match.id} 
@@ -41,7 +46,7 @@ function MatchData() {
               onClick={() => onClickMatch(match.id)}
             />
           ))}
-        </div>
+        </SimpleGrid>
       ) : (
         <p>No matches available</p>
       )}
