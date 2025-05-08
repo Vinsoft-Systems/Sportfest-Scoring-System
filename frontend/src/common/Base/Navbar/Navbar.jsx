@@ -9,18 +9,31 @@ import { useLocation } from 'react-router-dom';
 import Logo from '../Logo';
 import NavItem from './NavItem';
 import classes from './navbar.module.css';
+import { isAction } from '@reduxjs/toolkit';
 
 export default function Navbar({ open, toggle }) {
   const location = useLocation();
   const { navbarWidth } = useSize();
   const [activeLink, setActiveLink] = React.useState(location.pathname);
   const { height, ref } = useElementSize();
+  const isAdminRoute = location.pathname.startsWith('/admin'); 
+
 
   const goldenRatio = useMemo(() => `calc(calc(100% - ${rem(height)}) * 0.382)`, [height]);
 
   React.useEffect(() => {
     setActiveLink(location.pathname);
   }, [location]);
+
+  const routeFilter = useMemo(() => {
+    return Object.values(routes).filter(route => {
+      if (isAdminRoute) {
+        return route.path.startsWith('/admin');
+      } else {
+        return route.isPublic === true;
+      }
+    });
+  }, [isAdminRoute]);
 
   return (
     <>
@@ -50,7 +63,7 @@ export default function Navbar({ open, toggle }) {
           <Box mah={goldenRatio} />
           <Box className="navigation-outer-wrapper">
             <Box className="navigation-inner-wrapper" ref={ref}>
-              {Object.values(routes).map((item) => (
+              {routeFilter.map((item) => (
                 <NavItem
                   item={item}
                   activeLink={activeLink}
@@ -62,9 +75,16 @@ export default function Navbar({ open, toggle }) {
             </Box>
           </Box>
         </Group>
-        <Box h={USER_MENU_HEIGHT} bottom={0} w="100%" p="xs" bg="main">
-          <UserMenu open={open} />
-        </Box>
+
+
+        {isAdminRoute ? (
+          <Box h={USER_MENU_HEIGHT} bottom={0} w="100%" p="xs" bg="main">
+            <UserMenu open={open} />
+          </Box>
+        ) : (
+          <Box h={USER_MENU_HEIGHT} bottom={0} w="100%" p="xs">
+          </Box>
+        )}        
       </Stack>
     </>
   );

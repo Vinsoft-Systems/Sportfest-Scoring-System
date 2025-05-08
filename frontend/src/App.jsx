@@ -14,11 +14,11 @@ function Wrapper() {
 
   if (loading) return;
 
-  if (!isAdminRoute || user) {
-    return <MainFrame showNavbar={isAdminRoute} />;
+  if (isAdminRoute && !user){
+    return <Navigate to={loginPath} />
   }
 
-  return <Navigate to={loginPath} />;
+  return <MainFrame showNavbar={true} />;
 }
 
 function App() {

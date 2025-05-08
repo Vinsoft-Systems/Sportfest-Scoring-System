@@ -1,6 +1,6 @@
 import React from 'react';
-import { useState, useEffect, useNavigate } from 'react';
-import { Center, Flex, SimpleGrid, Title } from '@mantine/core';
+import { useState, useEffect } from 'react';
+import { Center, Flex, SimpleGrid, Title} from '@mantine/core';
 import { ApiProvider, useApi } from 'fastapi-rtk';
 import  MatchCard  from '@/common/components/MatchCard'
 
@@ -39,13 +39,16 @@ function MatchData() {
           verticalSpacing={{ base: 'md', sm: 'lg' }}
           w="100%"
         >
-          {matches.result.map((match) => (
+        {matches.result.map((match) => 
+          match.status === 'In Progress' ? (
             <MatchCard 
               key={match.id} 
               match={match} 
               onClick={() => onClickMatch(match.id)}
             />
-          ))}
+          ) : null
+        )}
+          
         </SimpleGrid>
       ) : (
         <p>No matches available</p>

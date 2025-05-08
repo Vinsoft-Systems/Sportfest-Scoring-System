@@ -35,6 +35,7 @@ export default function MatchCard({ match, onClick }) {
     }
 
     const { name, description, date, sport_branch, status, score_list, team_a, team_b, competition } = match;
+
     return (
         <>
         <Card 
