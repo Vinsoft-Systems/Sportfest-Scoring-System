@@ -5,6 +5,7 @@ import AdminHome from "@/features/pages/admin/AdminHome.jsx";
 import AdminMatches from './features/pages/admin/AdminMatches';
 import AdminTeams from '@/features/pages/admin/AdminTeams.jsx';
 import AdminCompetitions from '@/features/pages/admin/AdminCompetitions.jsx';
+import Results from './common/components/ResultsCard';
 
 export const BASE_PATH = new URL(document.baseURI).pathname;
 
@@ -24,6 +25,12 @@ export const routes = {
     name: 'Home',
     Icon: IconHome,
     Element: Home,
+    isPublic: true,
+  },
+  result: {
+    path: '/results',
+    name: 'Result',
+    Element: Results,
     isPublic: true,
   },
   adminHome: {

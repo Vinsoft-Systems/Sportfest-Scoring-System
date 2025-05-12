@@ -38,55 +38,41 @@ const Results = () => {
     };
 
     return (
-    <div className="sports-results-container">
-      <h1>Sports Competition Results</h1>
-      
-      <div className="sport-selector">
-        <button 
-          className={activeSport === 'futsal' ? 'active' : ''}
-          onClick={() => handleSportChange('futsal')}
-        >
-          Futsal
-        </button>
-        <button 
-          className={activeSport === 'basketball' ? 'active' : ''}
-          onClick={() => handleSportChange('basketball')}
-        >
-          Basketball
-        </button>
-        <button 
-          className={activeSport === 'volleyball' ? 'active' : ''}
-          onClick={() => handleSportChange('volleyball')}
-        >
-          Volleyball
-        </button>
-      </div>
-      
-      <div className="standings-container">
-        <h2>{sportsData[activeSport].title}</h2>
-        <div className="standings-table">
-          <table>
-            <thead>
-              <tr>
-                {sportsData[activeSport].columns.map((column, index) => (
-                  <th key={index}>{column}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sportsData[activeSport].rows.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {row.map((cell, cellIndex) => (
-                    <td key={cellIndex}>{cell}</td>
-                  ))}
-                </tr>
+  <div className="sports-results-container">
+    {/* ... (keep your existing header and sport selector) */}
+    
+    <div className="standings-container">
+      <h2>{sportsData[activeSport].title}</h2>
+      <div className="standings-table">
+        <table>
+          <thead>
+            <tr>
+              {sportsData[activeSport].columns.map((column, index) => (
+                <th key={index}>{column}</th>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </tr>
+          </thead>
+          <tbody>
+            {sportsData[activeSport].rows.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                <td>{row.rank}</td>
+                <td>{row.team}</td>
+                <td>{row.played}</td>
+                <td>{row.wins}</td>
+                <td>{row.draws}</td>
+                <td>{row.losses}</td>
+                <td>{row.gf}</td>
+                <td>{row.ga}</td>
+                <td>{row.gd}</td>
+                <td>{row.points}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
-  );
+  </div>
+);
     
 }
 
