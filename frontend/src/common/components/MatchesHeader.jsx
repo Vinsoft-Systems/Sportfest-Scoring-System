@@ -11,7 +11,7 @@ import {
   Title,
 } from '@mantine/core';
 import classes from './MatchesHeader.module.css';
-import MatchCard from '@/common/components/MatchCard'
+import MatchCardWithScore from '@/common/components/MatchCardWithScore'
 import { useNavigate } from 'react-router-dom';
 import { IconFilterSearch, IconSortAscending } from '@tabler/icons-react';
 
@@ -131,7 +131,7 @@ export function MatchesHeader({tabs, matches}) {
                     mt="xl"
                   >
                     {filteredMatches.map((match) => (
-                      <MatchCard 
+                      <MatchCardWithScore 
                         key={match.id} 
                         match={match} 
                         onClick={() => handleMatchClick(match.id)} 
