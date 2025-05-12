@@ -48,26 +48,32 @@ export default function MatchCard({ match, onClick }) {
             onClick={onClick}
             style={{cursor: 'pointer'}}
         >  
-            <Flex direction="row" align="center" pb="lg" justify={'space-between'} withBorder>
+            <Flex direction="row" align="center" pb={{ base: 'xs', sm: 'md' }} justify={'space-between'} withBorder>
                 <Flex gap="sm">
-                    <Text size="12px">{formatDate(date)}</Text>
+                    <Text size="10px">{formatDate(date)}</Text>
                 </Flex>
 
                 <Pill 
-                    style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} 
+                    size='xs'
+                    style={{display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        paddingTop: '2px'
+
+                }} 
                     bg={setPillBgColor(status)}
                     >
-                    <Flex align="center" gap="xs">
-                        <IconPointFilled size={16} color={setPillColor(status)} />
-                        <Text size="xs" fw={600} c={setPillColor(status)}>{status}</Text>
+                    <Flex align="center"  gap="3px">
+                        <IconPointFilled size={12} color={setPillColor(status)} />
+                        <Text size="10px" fw={600} c={setPillColor(status)}>{status}</Text>
                     </Flex>
                 </Pill>
             </Flex>
 
             <Flex direction="row" align="center" pb="sm" gap="xs" justify={'center'}>
-                <Text  size="12px" fw={600}>{sport_branch}</Text>
+                <Text  size="10px" fw={600}>{sport_branch}</Text>
                 <Divider orientation="vertical" size="sm"/>
-                <Text  size="12px" fw={600}>{name}</Text>
+                <Text  size="10px" fw={600}>{name}</Text>
             </Flex>
 
             {/* Lapangan */}
@@ -75,10 +81,10 @@ export default function MatchCard({ match, onClick }) {
                 <Text  size="12px" fw={600}>{description}</Text>
             </Flex> */}
 
-            <Grid pb="md">
-                <Grid.Col span="auto" ><Text fw={600} ta="center">{team_a.name}</Text></Grid.Col>
-                <Grid.Col span={2}><Text fw={800} size="20px" ta="center"> vs </Text></Grid.Col>
-                <Grid.Col span="auto"><Text fw={600} ta="center">{team_b.name}</Text></Grid.Col>
+            <Grid pb="md" justify='center' align='center'>
+                <Grid.Col span="auto" ><Text fw={600} size="sm"ta="center">{team_a.name}</Text></Grid.Col>
+                <Grid.Col span={2}><Text fw={800} size="md" ta="center"> vs </Text></Grid.Col>
+                <Grid.Col span="auto"><Text fw={600} size="sm" ta="center">{team_b.name}</Text></Grid.Col>
             </Grid>
         </Card>
         </>
