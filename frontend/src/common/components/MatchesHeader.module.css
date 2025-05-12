@@ -42,3 +42,17 @@
     font-size: 14px;
   }
 }
+
+.filterSelect {
+  min-width: 140px;
+}
+
+.sortSelect {
+  min-width: 120px;
+}
+
+@media (max-width: 576px) {
+  .filterSelect, .sortSelect {
+    width: 100%;
+  }
+}
