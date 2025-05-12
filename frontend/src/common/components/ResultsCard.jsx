@@ -38,6 +38,7 @@ const Results = () => {
     };
 
     return (
+<<<<<<< HEAD
   <div className="sports-results-container">
     {/* ... (keep your existing header and sport selector) */}
     
@@ -73,6 +74,57 @@ const Results = () => {
     </div>
   </div>
 );
+=======
+    <div className="sports-results-container">
+      <h1>Sports Competition Results</h1>
+      
+      <div className="sport-selector">
+        <button 
+          className={activeSport === 'futsal' ? 'active' : ''}
+          onClick={() => handleSportChange('futsal')}
+        >
+          Futsal
+        </button>
+        <button 
+          className={activeSport === 'basketball' ? 'active' : ''}
+          onClick={() => handleSportChange('basketball')}
+        >
+          Basketball
+        </button>
+        <button 
+          className={activeSport === 'volleyball' ? 'active' : ''}
+          onClick={() => handleSportChange('volleyball')}
+        >
+          Volleyball
+        </button>
+      </div>
+      
+      <div className="standings-container">
+        <h2>{sportsData[activeSport].title}</h2>
+        <div className="standings-table">
+          <table>
+            <thead>
+              <tr>
+                {sportsData[activeSport].columns.map((column, index) => (
+                  <th key={index}>{column}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {sportsData[activeSport].rows.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {row.map((cell, cellIndex) => (
+                    <td key={cellIndex}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+>>>>>>> ca55549f6a87cfb9e4add72e7f5d06ca17166438
     
 }
 
