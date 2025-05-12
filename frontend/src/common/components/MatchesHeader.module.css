@@ -1,0 +1,58 @@
+.header {
+  width: 100%;
+}
+
+.mainSection {
+  padding: 0;
+}
+
+.tabs {
+  width: 100%;
+}
+
+.tabsList {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none; /* For Firefox */
+  margin-bottom: var(--mantine-spacing-xs);
+  padding-bottom: 2px;
+}
+
+.tabsList::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+.tab {
+  white-space: nowrap;
+  min-width: fit-content;
+  font-weight: 500;
+  padding: 0 var(--mantine-spacing-md);
+  height: 36px;
+}
+
+.cardWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+@media (max-width: 576px) {
+  .tab {
+    padding: 0 var(--mantine-spacing-sm);
+    font-size: 14px;
+  }
+}
+
+.filterSelect {
+  min-width: 140px;
+}
+
+.sortSelect {
+  min-width: 120px;
+}
+
+@media (max-width: 576px) {
+  .filterSelect, .sortSelect {
+    width: 100%;
+  }
+}

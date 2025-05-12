@@ -81,9 +81,9 @@ export default function MatchCard({ match, onClick }) {
                 <Text  size="12px" fw={600}>{description}</Text>
             </Flex> */}
 
-            <Grid pb="md" justify='center' align='center' >
+            <Grid pb="md" justify='center' align='center'>
                 <Grid.Col span="auto" ><Text fw={600} size="sm"ta="center">{team_a.name}</Text></Grid.Col>
-                <Grid.Col span={2}><Text fw={800} size="md" ta="center"> vs </Text></Grid.Col>
+                <Grid.Col span={2}><Text fw={800} size="md" ta="center">{match.score_list[0]}</Text></Grid.Col>
                 <Grid.Col span="auto"><Text fw={600} size="sm" ta="center">{team_b.name}</Text></Grid.Col>
             </Grid>
         </Card>
