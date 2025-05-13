@@ -131,6 +131,22 @@ const ResultsCard = () => {
           { id: 6, team: 'Team F', played: 10, wins: 5, losses: 5, setsWon: 18, setsLost: 15, points: 15 }
         ]
       }
+    },
+    badminton: {
+      title: 'Badminton Standings',
+      columns: ["Rank", "Name(s)", "Played", "Wins", "Losses", "Points"],
+      groups: {
+        'Ganda Putra': [
+          { id: 1, team: 'Asu & Asi', played: 2, wins: 2, losses: 0, points: 2 },
+          { id: 2, team: 'Upin & Ipin', played: 2, wins: 1, losses: 1, points: 1 },
+          { id: 3, team: 'Prabowo & Gibran', played: 2, wins: 0, losses: 0, points: 0 }
+        ],
+        'Ganda Campuran': [
+          { id: 4, team: 'Cowo & Cewe', played: 2, wins: 1, losses: 1, points: 1 },
+          { id: 5, team: 'Wowo & Wiwi', played: 2, wins: 0, losses: 0, points: 0 },
+          { id: 6, team: 'Adam & Eve', played: 2, wins: 2, losses: 0, points: 2 }
+        ]
+      }
     }
   };
 
@@ -157,6 +173,8 @@ const ResultsCard = () => {
           const bSetDiff = b.setsWon - b.setsLost;
           if (bSetDiff !== aSetDiff) return bSetDiff - aSetDiff;
           return b.setsWon - a.setsWon;
+        } else if (sport === 'badminton') {
+          return b.wins - a.wins;
         }
         return 0;
       }).map((team, index) => ({
@@ -192,6 +210,15 @@ const ResultsCard = () => {
           Object.entries(sportsDataRaw.volleyball.groups).map(([group, teams]) => [
             group,
             sortTeams(teams, 'volleyball')
+          ])
+        )
+      },
+      badminton: {
+        ...sportsDataRaw.volleyball,
+        groups: Object.fromEntries(
+          Object.entries(sportsDataRaw.badminton.groups).map(([group, teams]) => [
+            group,
+            sortTeams(teams, 'badminton')
           ])
         )
       }
@@ -278,6 +305,14 @@ const ResultsCard = () => {
                       )}
                       
                       {activeSport === 'volleyball' && (
+                        <>
+                          <td style={styles.td}>{team.losses}</td>
+                          <td style={styles.td}>{team.setsWon}</td>
+                          <td style={styles.td}>{team.setsLost}</td>
+                        </>
+                      )}
+
+                      {activeSport === 'badminton' && (
                         <>
                           <td style={styles.td}>{team.losses}</td>
                           <td style={styles.td}>{team.setsWon}</td>
