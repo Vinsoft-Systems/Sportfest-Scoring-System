@@ -118,17 +118,17 @@ const ResultsCard = () => {
     },
     volleyball: {
       title: 'Volleyball Standings',
-      columns: ["Rank", "Team", "Played", "Wins", "Losses", "Sets Won", "Sets Lost", "Points"],
+      columns: ["Rank", "Team", "Played", "Wins", "Losses", "Points"],
       groups: {
         'Group A': [
-          { id: 1, team: 'Team A', played: 10, wins: 9, losses: 1, setsWon: 27, setsLost: 5, points: 27 },
-          { id: 2, team: 'Team B', played: 10, wins: 9, losses: 1, setsWon: 28, setsLost: 6, points: 27 },
-          { id: 3, team: 'Team C', played: 10, wins: 8, losses: 2, setsWon: 25, setsLost: 8, points: 24 }
+          { id: 1, team: 'Team A', played: 10, wins: 9, losses: 1, points: 27 },
+          { id: 2, team: 'Team B', played: 10, wins: 9, losses: 1, points: 27 },
+          { id: 3, team: 'Team C', played: 10, wins: 8, losses: 2, points: 24 }
         ],
         'Group B': [
-          { id: 4, team: 'Team D', played: 10, wins: 7, losses: 3, setsWon: 23, setsLost: 10, points: 21 },
-          { id: 5, team: 'Team E', played: 10, wins: 6, losses: 4, setsWon: 20, setsLost: 12, points: 18 },
-          { id: 6, team: 'Team F', played: 10, wins: 5, losses: 5, setsWon: 18, setsLost: 15, points: 15 }
+          { id: 4, team: 'Team D', played: 10, wins: 7, losses: 3, points: 21 },
+          { id: 5, team: 'Team E', played: 10, wins: 6, losses: 4, points: 18 },
+          { id: 6, team: 'Team F', played: 10, wins: 5, losses: 5, points: 15 }
         ]
       }
     },
@@ -157,7 +157,6 @@ const ResultsCard = () => {
         // First by points (descending)
         if (b.points !== a.points) return b.points - a.points;
         
-        // Sport-specific tiebreakers
         if (sport === 'futsal') {
           const aGD = a.gf - a.ga;
           const bGD = b.gf - b.ga;
@@ -180,7 +179,6 @@ const ResultsCard = () => {
       }).map((team, index) => ({
         ...team,
         rank: index + 1,
-        // Calculate derived fields
         ...(sport === 'futsal' && { gd: team.gf - team.ga })
       }));
     };
@@ -307,16 +305,12 @@ const ResultsCard = () => {
                       {activeSport === 'volleyball' && (
                         <>
                           <td style={styles.td}>{team.losses}</td>
-                          <td style={styles.td}>{team.setsWon}</td>
-                          <td style={styles.td}>{team.setsLost}</td>
                         </>
                       )}
 
                       {activeSport === 'badminton' && (
                         <>
                           <td style={styles.td}>{team.losses}</td>
-                          <td style={styles.td}>{team.setsWon}</td>
-                          <td style={styles.td}>{team.setsLost}</td>
                         </>
                       )}
                       
