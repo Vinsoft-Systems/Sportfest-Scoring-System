@@ -212,7 +212,7 @@ const ResultsCard = () => {
         )
       },
       badminton: {
-        ...sportsDataRaw.volleyball,
+        ...sportsDataRaw.badminton,
         groups: Object.fromEntries(
           Object.entries(sportsDataRaw.badminton.groups).map(([group, teams]) => [
             group,
