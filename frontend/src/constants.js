@@ -7,6 +7,7 @@ import AdminTeams from '@/features/pages/admin/AdminTeams.jsx';
 import AdminCompetitions from '@/features/pages/admin/AdminCompetitions.jsx';
 import { IconAwardFilled } from '@tabler/icons-react';
 import Matches from '@/features/pages/Matches.jsx'
+import Results from './common/components/ResultsCard';
 
 export const BASE_PATH = new URL(document.baseURI).pathname;
 
@@ -33,6 +34,11 @@ export const routes = {
     name: 'Matches',
     Icon: IconAwardFilled,
     Element: Matches,
+  },
+  result: {
+    path: '/results',
+    name: 'Result',
+    Element: Results,
     isPublic: true,
   },
   adminHome: {
