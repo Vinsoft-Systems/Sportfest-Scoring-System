@@ -1,17 +1,28 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Center, Flex, SimpleGrid, Title} from '@mantine/core';
 import { ApiProvider, useApi } from 'fastapi-rtk';
 import  MatchCard  from '@/common/components/MatchCard'
 
 function MatchData() {
+  const navigate = useNavigate();
   const { getEntry, loading: isLoading } = useApi();
   const [matches, setMatches] = useState(null);
   const [error, setError] = useState(null);
 
-  const onClickMatch = (matchId) => {
-    Navigate(`/match/${matchId}`)
-  } 
+const onClickMatch = (match) => {
+    // Get match ID from the ids array if available
+    // Or fall back to match.id if it exists directly on the match object
+    const matchId = match.id || (matches && matches.ids && matches.ids[matches.result.indexOf(match)]);
+    
+    if (matchId) {
+      console.log('Navigating to match ID:', matchId);
+      navigate(`/match/${matchId}`);
+    } else {
+      console.error('Cannot navigate: Match ID not found', match);
+    }
+  }
 
   useEffect(() => {
     getEntry('/')
@@ -44,7 +55,7 @@ function MatchData() {
             <MatchCard 
               key={match.id} 
               match={match} 
-              onClick={() => onClickMatch(match.id)}
+              onClick={() => onClickMatch(match)}
             />
           ) : null
         )}

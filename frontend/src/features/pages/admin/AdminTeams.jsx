@@ -14,6 +14,10 @@ export default function AdminTeams({ resource_name }) {
             players: {
               component: ({ componentProps }) => <JsonFormsTagsInput {...componentProps}></JsonFormsTagsInput>,
             },
+            profile_picture: {
+              type: 'file',
+              accept: 'image/*',
+            }
           },
           edit: {
             sport_branch: {
@@ -22,6 +26,10 @@ export default function AdminTeams({ resource_name }) {
             players: {
               component: ({ componentProps }) => <JsonFormsTagsInput {...componentProps}></JsonFormsTagsInput>,
             },
+            profile_picture: {
+              type: 'file',
+              accept: 'image/*',
+            }
           },
         }}
       />
