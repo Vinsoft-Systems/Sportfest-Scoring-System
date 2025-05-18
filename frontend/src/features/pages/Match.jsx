@@ -11,6 +11,7 @@ function MatchContent() {
   const [error, setError] = useState(null);
   const [teamADetails, setTeamADetails] = useState(null);
   const [teamBDetails, setTeamBDetails] = useState(null);
+  const [isLoadingTeams, setIsLoadingTeams] = useState(false);
 
   useEffect(() => {
     if (matchId) {
@@ -20,10 +21,17 @@ function MatchContent() {
           if (data && data.result) {
             setMatch(data.result);
             
-            if (data.result.team_a_id) {
+            if (data.result.team_a && Object.keys(data.result.team_a).length > 1) {
+              console.log("Using existing team A data:", data.result.team_a);
+              setTeamADetails(data.result.team_a);
+            } else if (data.result.team_a_id) {
               fetchTeamDetails(data.result.team_a_id, 'A');
             }
-            if (data.result.team_b_id) {
+            
+            if (data.result.team_b && Object.keys(data.result.team_b).length > 1) {
+              console.log("Using existing team B data:", data.result.team_b);
+              setTeamBDetails(data.result.team_b);
+            } else if (data.result.team_b_id) {
               fetchTeamDetails(data.result.team_b_id, 'B');
             }
           }
@@ -35,22 +43,41 @@ function MatchContent() {
     }
   }, [matchId, getEntry]);
 
-  const fetchTeamDetails = (teamId, teamType) => {
-    const api = new ApiProvider({ resource_name: 'team' });
-    api.getEntry(teamId)
-      .then((data) => {
-        if (teamType === 'A') {
-          setTeamADetails(data.result);
-        } else {
-          setTeamBDetails(data.result);
-        }
-      })
-      .catch((err) => {
-        console.error(`Error fetching team ${teamType}:`, err);
-      });
+  const fetchTeamDetails = async (teamId, teamType) => {
+    setIsLoadingTeams(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/team/${teamId}`);
+      if (!response.ok) throw new Error(`Failed to fetch team ${teamType} details`);
+      
+      const data = await response.json();
+      console.log(`Team ${teamType} fetched data:`, data);
+      
+      if (teamType === 'A') {
+        setTeamADetails(data.result);
+        console.log("Set TeamA details:", data.result);
+      } else {
+        setTeamBDetails(data.result);
+        console.log("Set TeamB details:", data.result);
+      }
+    } catch (err) {
+      console.error(`Error fetching team ${teamType}:`, err);
+    } finally {
+      setIsLoadingTeams(false);
+    }
   };
 
-  if (loading) {
+  // Function to determine if the sport uses best-of-3 format
+  const isBestOfThreeFormat = () => {
+    if (!match || !match.sport_branch) return false;
+    
+    const sportBranch = match.sport_branch.toLowerCase();
+    
+    // Check if sport branch is Badminton or Volleyball
+    return sportBranch.includes('badminton') || 
+           sportBranch.includes('volleyball');
+  };
+
+  if (loading || isLoadingTeams) {
     return (
       <Center h="50vh">
         <Loader />
@@ -80,6 +107,7 @@ function MatchContent() {
         match={match} 
         teamADetails={teamADetails}
         teamBDetails={teamBDetails}
+        withBO3={isBestOfThreeFormat()}
       />
     </Container>
   );

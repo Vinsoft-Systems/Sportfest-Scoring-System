@@ -1,10 +1,10 @@
 import React from 'react';
-import { Card, Text, Group, Grid, Divider, Title, Paper, Badge, Avatar, Box, Flex, Stack, Center } from '@mantine/core';
+import { Card, Text, Group, Grid, Divider, Title, Paper, Badge, Avatar, Box, Flex, Stack, Center, Table } from '@mantine/core';
 import { formatDate } from '../Base/utils/utils';
-import { IconBallFootball, IconSeparator } from '@tabler/icons-react';
+import { IconBallFootball, IconMapPin, IconInfoCircle } from '@tabler/icons-react';
 
 export default function MatchDetailsCard({ match, teamADetails, teamBDetails, withBO3}) {
-  const { name, description, date, sport_branch, status, score_list, competition } = match;
+  const { name, description, date, sport_branch, status, score_list, competition, location, match_notes } = match;
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -31,139 +31,207 @@ export default function MatchDetailsCard({ match, teamADetails, teamBDetails, wi
     return 'VS';
   };
 
-  const formatPlayers = (players) => {
-    if (!players) return null;
+  const getIndividualScores = () => {
+    if (!score_list || score_list.length <= 1) return [];
+    
+    return score_list.slice(1).map(score => {
+      if (score.includes(':')) {
+        return score.replace(':', ' - ');
+      }
+      return score;
+    });
+  };
+
+  const getPlayersList = (players) => {
+    if (!players) return [];
     if (Array.isArray(players)) {
-      return players.join(', ');
+      return players;
     }
-    return Object.values(players).join(', ');
+    return Object.values(players);
   };
 
   return (
-    <Card shadow="sm" padding={{ base: 'sm', sm: 'lg' }} radius="md" withBorder w="100%">
+    <Card shadow="sm" padding={{ base: 'sm', sm: 'lg' }} radius="md" withBorder w={{base: "100%", sm: "80%"}} mx="auto" my="xl">
       <Stack spacing='xs'>
-        <Flex align={'flex-start'} justify={'space-between'}>
-          <Text size={10} c="dimmed" lineClamp={1}>{formatDate(date)}</Text>
-          <Badge color={getStatusColor(status)} variant="light" size={{ base: "xs", sm: "md" }}>{status}</Badge>
-        </Flex>
+        <Box>
+          <Flex align="center" spacing="xs" gap="md" position="center" wrap="wrap" justify="space-between">
+            <Text size="10px">{formatDate(date)}</Text>
+            <Badge color={getStatusColor(status)} variant="light" size={{ base: "xs", sm: "md" }}>{status}</Badge>
+          </Flex>
+        </Box>
 
         <Box>
-          <Flex spacing="xs" gap="md" position="center" wrap="wrap" justify="center">
-            <Text align="center" mb='xs' size="10px" fw={600}>{name}</Text>
+          <Flex align="center" spacing="xs" gap="md" position="center" wrap="wrap" justify="center">
+            <Text size="10px">{name}</Text>
             <Divider orientation="vertical" size="sm"/>
-            <Text align="center" size="10px" c="dimmed" fw={600}>{sport_branch}</Text>
-            <Text size={{ base: "10px", sm: "sm" }} c="dimmed" display={{ base: 'none', xs: 'block' }}>•</Text>
+            <Text size="10px">{sport_branch}</Text>
           </Flex>
-          
-{/* `          {description && (
-            <Text align="center" size={{ base: "10px", sm: "sm" }} mt="xs" c="dimmed">{description}</Text>
-          )}` */}
         </Box>
 
         <Divider />
 
-        <Flex gutter={{ base: 'xs', sm: 'lg' }} align="center" justify={'space-around'} >
-              <Stack align="center" spacing={{ sm: 'md' }} justify="center" h="100%">
-                {teamADetails?.profile_picture ? (
-                  <Avatar 
-                    src={teamADetails.profile_picture} 
-                    size={{ sm: 120 }} 
-                    radius="md"
-                    alt={teamADetails?.name || match.team_a?.name}
-                    styles={{
-                      root: { border: '1px solid #eaeaea' }
-                    }}
-                  />
-                ) : (
-                  <Center
-                    style={{
-                      width: '100%',
-                      maxWidth: '120px',
-                      aspectRatio: '1/1',
-                      borderRadius: '8px',
-                      backgroundColor: '#f1f3f5',
-                      fontSize: '36px',
-                      fontWeight: 'bold',
-                      color: '#4263eb'
-                    }}
-                  >
-                    {teamADetails?.name?.charAt(0) || match.team_a?.name?.charAt(0) || 'A'}
-                  </Center>
-                )}
-                <Title order={4} size={{ sm: 'h4' }}>{teamADetails?.name || match.team_a?.name}</Title>
-                {formatPlayers(teamADetails?.players) && (
-                  <Box>
-                    <Text size="sm" weight={600} c="dimmed">Players</Text>
-                    <Text size="sm" align="center">
-                      {formatPlayers(teamADetails?.players)}
-                    </Text>
-                  </Box>
-                )}
-              </Stack>
-
-          {/* Score */}
-            <Flex 
-              withBorder
-              p={{ sm: 'md' }}
-              radius="md" 
-              style={{ 
-                display: 'flex', 
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100%',
-              }}
-            >
-              <IconBallFootball size={16} style={{ opacity: 0.6, marginBottom: 6 }} />
-              <Title 
-                order={1} 
-                style={{ 
-                  fontSize: '32px', 
-                  fontWeight: 700,
+        <Flex gutter={{ base: 'xs', sm: 'lg' }} align="center" justify={'space-around'}>
+          <Stack align="center" spacing={{ base: 'xs', sm: 'sm' }} justify="center" h="100%">
+            {teamADetails?.profile_picture ? (
+              <Avatar 
+                src={teamADetails.profile_picture} 
+                size={{ base: 40, sm: 60 }} 
+                radius="md"
+                alt={teamADetails?.name || match.team_a?.name}
+                styles={{
+                  root: { border: '1px solid #eaeaea' }
+                }}
+              />
+            ) : (
+              <Center
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  maxWidth: '60px',
+                  maxHeight: '60px',
+                  borderRadius: '8px',
+                  backgroundColor: '#f1f3f5',
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  color: '#4263eb'
                 }}
               >
-                {formatScore()}
-              </Title>
-            </Flex>
+                {teamADetails?.name?.charAt(0) || match.team_a?.name?.charAt(0) || 'A'}
+              </Center>
+            )}
+            <Text fw={600} size={{ base: "12px", sm: "14px" }}>{teamADetails?.name || match.team_a?.name}</Text>
+          </Stack>
 
-              <Stack align="center" spacing={{ sm: 'md' }} justify="center" h="100%">
-                {teamBDetails?.profile_picture ? (
-                  <Avatar 
-                    src={teamBDetails.profile_picture} 
-                    size={{ sm: 120 }} 
-                    radius="md"
-                    alt={teamBDetails?.name || match.team_b?.name}
-                    styles={{
-                      root: { border: '1px solid #eaeaea' }
-                    }}
-                  />
-                ) : (
-                  <Center
-                    style={{
-                      width: '100%',
-                      maxWidth: '120px',
-                      aspectRatio: '1/1',
-                      borderRadius: '8px',
-                      backgroundColor: '#f1f3f5',
-                      fontSize: '36px',
-                      fontWeight: 'bold',
-                      color: '#fa5252'
-                    }}
-                  >
-                    {teamBDetails?.name?.charAt(0) || match.team_b?.name?.charAt(0) || 'B'}
-                  </Center>
-                )}
-                <Title order={4} size={{ sm: 'h4' }}>{teamBDetails?.name || match.team_b?.name}</Title>
-                {formatPlayers(teamBDetails?.players) && (
-                  <Box>
-                    <Text size="sm" weight={600} c="dimmed">Players</Text>
-                    <Text size="sm" align="center">
-                      {formatPlayers(teamBDetails?.players)}
-                    </Text>
-                  </Box>
-                )}
-              </Stack>
+          <Flex 
+            radius="md" 
+            style={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+            }}
+          >
+            <IconBallFootball size={16} style={{ opacity: 0.6, marginBottom: 6 }} />
+            <Title 
+              order={1} 
+              style={{ 
+                fontSize: '24px', 
+                fontWeight: 700,
+                marginBottom: withBO3 && score_list && score_list.length > 1 ? '4px' : '0'
+              }}
+            >
+              {formatScore()}
+            </Title>
+
+            {withBO3 && getIndividualScores().length > 0 && (
+              <Flex direction="column" gap={4} mt={0} wrap="wrap" justify="center">
+              {getIndividualScores().map((score, index) => (
+                <Text
+                  key={index} 
+                  size="10px"  
+                  c="dimmed" 
+                  fw={400}    
+                  style={{
+                    display: 'inline-block', 
+                    padding: '0px 2px',  
+                    border: '1px solid #e9ecef',
+                    borderRadius: '3px', 
+                    backgroundColor: '#f8f9fa',
+                    lineHeight: 1.3,      // Tighter line height
+                    margin: '0 1px'
+                  }}
+                >
+                  {score}
+                </Text>
+              ))}
+            </Flex>
+            )}
+          </Flex>
+
+          <Stack align="center" spacing={{ base: 'xs', sm: 'sm' }} justify="center" h="100%">
+            {teamBDetails?.profile_picture ? (
+              <Avatar 
+                src={teamBDetails.profile_picture} 
+                size={{ base: 40, sm: 60 }} 
+                radius="md"
+                alt={teamBDetails?.name || match.team_b?.name}
+                styles={{
+                  root: { border: '1px solid #eaeaea' }
+                }}
+              />
+            ) : (
+              <Center
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  maxWidth: '60px',
+                  maxHeight: '60px',
+                  borderRadius: '8px',
+                  backgroundColor: '#f1f3f5',
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  color: '#fa5252'
+                }}
+              >
+                {teamBDetails?.name?.charAt(0) || match.team_b?.name?.charAt(0) || 'B'}
+              </Center>
+            )}
+            <Text fw={600} size={{ base: "12px", sm: "14px" }}>{teamBDetails?.name || match.team_b?.name}</Text>
+          </Stack>
         </Flex>
+        
+        <Divider my="xs" />
+        
+        <Box>
+          <Stack spacing="xs">
+              {description && (
+                <Group spacing="xs" align="flex-start" noWrap>
+                  <IconInfoCircle size={14} style={{ opacity: 0.7, marginTop: 3 }} />
+                  <Text size="xs">{description}</Text>
+                </Group>
+              )}
+           </Stack>
+        </Box>
+        
+        {(getPlayersList(teamADetails?.players).length > 0 || getPlayersList(teamBDetails?.players).length > 0) && (
+          <>
+            <Divider my="xs" />
+            
+            <Box>
+              <Text size="sm" weight={600} c="dimmed" ta="center" mb={5}>Players</Text>
+              <Table striped withColumnBorders withTableBorder size="xs">
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th style={{ fontSize:"12px", textAlign: 'center' }}>{teamADetails?.name || match.team_a?.name}</Table.Th>
+                    <Table.Th style={{ fontSize:"12px", textAlign: 'center' }}>{teamBDetails?.name || match.team_b?.name}</Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {Array.from({ 
+                    length: Math.max(
+                      getPlayersList(teamADetails?.players).length, 
+                      getPlayersList(teamBDetails?.players).length
+                    ) 
+                  }).map((_, index) => (
+                    <Table.Tr key={index}>
+                      <Table.Td style={{ textAlign: 'center', padding: '4px 8px' }}>
+                        <Text size='xs'>
+                          {getPlayersList(teamADetails?.players)[index] || '-'}
+                        </Text>
+                      </Table.Td>
+                      <Table.Td style={{ textAlign: 'center', padding: '4px 8px' }}>
+                        <Text size='xs'>
+                          {getPlayersList(teamBDetails?.players)[index] || '-'}
+                        </Text>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
+            </Box>
+          </>
+        )}
       </Stack>
     </Card>
   );
