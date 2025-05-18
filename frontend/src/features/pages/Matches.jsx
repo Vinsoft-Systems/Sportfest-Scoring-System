@@ -17,7 +17,11 @@ function MatchesContent() {
       if (data && data.result) {
         const matchesByDate = {};
         
-        data.result.forEach(match => {
+        data.result.forEach((match, index) => {
+          if (!match.id && data.ids) {
+            match.id = data.ids[index];
+          }
+          
           const matchDate = new Date(match.date).toLocaleDateString();
           
           if (!matchesByDate[matchDate]) {
@@ -28,8 +32,7 @@ function MatchesContent() {
         });
         
         setOrganizedMatches(matchesByDate);
-
-        console.log('Organized match: ', matchesByDate);
+        console.log('Organized matches with IDs:', matchesByDate);
       }
     })
     .catch(err => {

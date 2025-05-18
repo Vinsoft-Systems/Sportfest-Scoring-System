@@ -11,9 +11,7 @@ function MatchData() {
   const [matches, setMatches] = useState(null);
   const [error, setError] = useState(null);
 
-const onClickMatch = (match) => {
-    // Get match ID from the ids array if available
-    // Or fall back to match.id if it exists directly on the match object
+  const onClickMatch = (match) => {
     const matchId = match.id || (matches && matches.ids && matches.ids[matches.result.indexOf(match)]);
     
     if (matchId) {

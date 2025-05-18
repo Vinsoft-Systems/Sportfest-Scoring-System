@@ -26,8 +26,16 @@ export function MatchesHeader({tabs, matches}) {
     </Tabs.Tab>
   ));
 
-  const handleMatchClick = (id) => {
-    navigate(`/match/${id}`);
+  const onClickMatch = (match) => {
+    const matchId = match.id || match.id_;
+    
+    if (matchId) {
+      console.log('Navigating to match ID:', matchId);
+      navigate(`/match/${matchId}`);
+    } else {
+      console.error('Cannot navigate: Match ID not found', match);
+      console.log('Match object:', match);
+    }
   }
 
   const getFilteredAndSortedMatches = (dateKey) => {
@@ -135,7 +143,7 @@ export function MatchesHeader({tabs, matches}) {
                         key={match.id} 
                         match={match} 
                         withScore={true}
-                        onClick={() => handleMatchClick(match.id)} 
+                        onClick={() => onClickMatch(match)} 
                       />
                     ))}
                   </SimpleGrid>
