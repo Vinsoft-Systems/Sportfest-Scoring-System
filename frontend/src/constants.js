@@ -36,6 +36,7 @@ export const routes = {
     name: 'Matches',
     Icon: IconAwardFilled,
     Element: Matches,
+    isPublic: true
   },
   match: {
     path: '/match/:matchId',

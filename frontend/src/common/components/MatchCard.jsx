@@ -2,7 +2,7 @@ import { Card, Text, Flex, Divider, Pill, Grid, Badge } from '@mantine/core'
 import { formatDate } from '../Base/utils/utils';
 import { IconPointFilled } from '@tabler/icons-react'
 
-export default function MatchCard({ match, onClick }) {
+export default function MatchCard({ match, onClick, withScore }) {
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -54,7 +54,10 @@ export default function MatchCard({ match, onClick }) {
 
             <Grid pb="md" justify='center' align='center' >
                 <Grid.Col span="auto" ><Text fw={600} size="sm"ta="center">{team_a.name}</Text></Grid.Col>
-                <Grid.Col span={2}><Text fw={800} size="md" ta="center"> vs </Text></Grid.Col>
+                { withScore == true ? 
+                    <Grid.Col span={2}><Text fw={800} size="md" ta="center">{match.score_list[0]}</Text></Grid.Col> :
+                    <Grid.Col span={2}><Text fw={800} size="md" ta="center"> vs </Text></Grid.Col>
+                }
                 <Grid.Col span="auto"><Text fw={600} size="sm" ta="center">{team_b.name}</Text></Grid.Col>
             </Grid>
         </Card>

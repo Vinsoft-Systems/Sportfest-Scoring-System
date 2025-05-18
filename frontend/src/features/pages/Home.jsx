@@ -55,6 +55,7 @@ const onClickMatch = (match) => {
             <MatchCard 
               key={match.id} 
               match={match} 
+              withScore={false}
               onClick={() => onClickMatch(match)}
             />
           ) : null
