@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Text, Group, Grid, Divider, Title, Paper, Badge, Avatar, Box, Flex, Stack, Center, Table } from '@mantine/core';
-import { formatDate } from '../Base/utils/utils';
+import { formatDate } from '../../Base/utils/utils';
 import { IconBallFootball, IconMapPin, IconInfoCircle } from '@tabler/icons-react';
 
 export default function MatchDetailsCard({ match, teamADetails, teamBDetails, withBO3}) {

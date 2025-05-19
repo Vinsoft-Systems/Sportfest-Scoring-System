@@ -1,5 +1,5 @@
 import { Card, Text, Flex, Divider, Pill, Grid, Badge } from '@mantine/core'
-import { formatDate } from '../Base/utils/utils';
+import { formatDate } from '../../Base/utils/utils';
 import { IconPointFilled } from '@tabler/icons-react'
 
 export default function MatchCard({ match, onClick, withScore }) {

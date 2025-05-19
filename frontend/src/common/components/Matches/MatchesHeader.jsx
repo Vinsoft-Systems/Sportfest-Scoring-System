@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { formatDateNoTime } from '../Base/utils/utils';
+import { formatDateNoTime } from '../../Base/utils/utils';
 import {
   Container,
   SimpleGrid,
@@ -11,7 +11,7 @@ import {
   Title,
 } from '@mantine/core';
 import classes from './MatchesHeader.module.css';
-import MatchCard from '@/common/components/MatchCard'
+import MatchCard from '@/common/components/Match/MatchCard'
 import { useNavigate } from 'react-router-dom';
 import { IconFilterSearch, IconSortAscending } from '@tabler/icons-react';
 

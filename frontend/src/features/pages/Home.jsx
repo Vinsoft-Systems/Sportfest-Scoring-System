@@ -1,9 +1,9 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Center, Flex, SimpleGrid, Title} from '@mantine/core';
+import { Center, Flex, SimpleGrid, Text} from '@mantine/core';
 import { ApiProvider, useApi } from 'fastapi-rtk';
-import  MatchCard  from '@/common/components/MatchCard'
+import  MatchCard  from '@/common/components/Match/MatchCard'
 
 function MatchData() {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ function MatchData() {
 
   return (
     <Flex direction="column" align="center" gap="md" w="100%" maw="1200px" px="md">
-      <Title order={1} ta="center" mb="md">Ongoing Matches</Title>
+      <Text size="lg" fw={700}>Ongoing Matches</Text>
       {matches.result && matches.result.length > 0 ? (
         <SimpleGrid 
           cols={{ base: 1, sm: 2, md: 3 }}

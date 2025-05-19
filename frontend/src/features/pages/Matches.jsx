@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { ApiProvider, useApi } from 'fastapi-rtk';
-import { MatchesHeader } from '@/common/components/MatchesHeader.jsx'
+import { MatchesHeader } from '@/common/components/Matches/MatchesHeader.jsx'
 
 function MatchesContent() {
   const { getEntry, loading: isLoading } = useApi();
