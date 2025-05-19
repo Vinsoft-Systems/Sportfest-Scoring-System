@@ -132,16 +132,42 @@ const ResultsCard = () => {
         ]
       }
     },
-    badminton: {
-      title: 'Badminton Standings',
+    badminton_ganda_putra: {
+      title: 'Badminton Ganda Putra',
       columns: ["Rank", "Name(s)", "Played", "Wins", "Losses", "Points"],
       groups: {
-        'Ganda Putra': [
+        'Group A': [
           { id: 1, team: 'Asu & Asi', played: 2, wins: 2, losses: 0, points: 2 },
           { id: 2, team: 'Upin & Ipin', played: 2, wins: 1, losses: 1, points: 1 },
           { id: 3, team: 'Prabowo & Gibran', played: 2, wins: 0, losses: 0, points: 0 }
         ],
-        'Ganda Campuran': [
+        'Group B': [
+          { id: 4, team: 'Cowo & Cewe', played: 2, wins: 1, losses: 1, points: 1 },
+          { id: 5, team: 'Wowo & Wiwi', played: 2, wins: 0, losses: 0, points: 0 },
+          { id: 6, team: 'Adam & Eve', played: 2, wins: 2, losses: 0, points: 2 }
+        ],
+        'Group C': [
+          { id: 4, team: 'Cowo & Cewe', played: 2, wins: 1, losses: 1, points: 1 },
+          { id: 5, team: 'Wowo & Wiwi', played: 2, wins: 0, losses: 0, points: 0 },
+          { id: 6, team: 'Adam & Eve', played: 2, wins: 2, losses: 0, points: 2 }
+        ]
+      }
+    },
+    badminton_ganda_campuran: {
+      title: 'Badminton Ganda Campuran',
+      columns: ["Rank", "Name(s)", "Played", "Wins", "Losses", "Points"],
+      groups: {
+        'Group A': [
+          { id: 1, team: 'Asu & Asi', played: 2, wins: 2, losses: 0, points: 2 },
+          { id: 2, team: 'Upin & Ipin', played: 2, wins: 1, losses: 1, points: 1 },
+          { id: 3, team: 'Prabowo & Gibran', played: 2, wins: 0, losses: 0, points: 0 }
+        ],
+        'Group B': [
+          { id: 4, team: 'Cowo & Cewe', played: 2, wins: 1, losses: 1, points: 1 },
+          { id: 5, team: 'Wowo & Wiwi', played: 2, wins: 0, losses: 0, points: 0 },
+          { id: 6, team: 'Adam & Eve', played: 2, wins: 2, losses: 0, points: 2 }
+        ],
+        'Group C': [
           { id: 4, team: 'Cowo & Cewe', played: 2, wins: 1, losses: 1, points: 1 },
           { id: 5, team: 'Wowo & Wiwi', played: 2, wins: 0, losses: 0, points: 0 },
           { id: 6, team: 'Adam & Eve', played: 2, wins: 2, losses: 0, points: 2 }
@@ -172,7 +198,9 @@ const ResultsCard = () => {
           const bSetDiff = b.setsWon - b.setsLost;
           if (bSetDiff !== aSetDiff) return bSetDiff - aSetDiff;
           return b.setsWon - a.setsWon;
-        } else if (sport === 'badminton') {
+        } else if (sport === 'badminton_ganda_putra') {
+          return b.wins - a.wins;
+        }else if (sport === 'badminton_ganda_campuran') {
           return b.wins - a.wins;
         }
         return 0;
@@ -211,12 +239,21 @@ const ResultsCard = () => {
           ])
         )
       },
-      badminton: {
-        ...sportsDataRaw.badminton,
+      badminton_ganda_putra: {
+        ...sportsDataRaw.badminton_ganda_putra,
         groups: Object.fromEntries(
-          Object.entries(sportsDataRaw.badminton.groups).map(([group, teams]) => [
+          Object.entries(sportsDataRaw.badminton_ganda_putra.groups).map(([group, teams]) => [
             group,
-            sortTeams(teams, 'badminton')
+            sortTeams(teams, 'badminton_ganda_putra')
+          ])
+        )
+      },
+      badminton_ganda_campuran: {
+        ...sportsDataRaw.badminton_ganda_campuran,
+        groups: Object.fromEntries(
+          Object.entries(sportsDataRaw.badminton_ganda_campuran.groups).map(([group, teams]) => [
+            group,
+            sortTeams(teams, 'badminton_ganda_campuran')
           ])
         )
       }
@@ -308,7 +345,13 @@ const ResultsCard = () => {
                         </>
                       )}
 
-                      {activeSport === 'badminton' && (
+                      {activeSport === 'badminton_ganda_putra' && (
+                        <>
+                          <td style={styles.td}>{team.losses}</td>
+                        </>
+                      )}
+
+                      {activeSport === 'badminton_ganda_campuran' && (
                         <>
                           <td style={styles.td}>{team.losses}</td>
                         </>
