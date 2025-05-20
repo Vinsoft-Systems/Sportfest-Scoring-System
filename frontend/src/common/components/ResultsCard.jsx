@@ -1,7 +1,150 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useApi } from 'fastapi-rtk';
+
+const GROUP_RULES = {
+  Futsal: [
+    { group: 'Group A', count: 3 },
+    { group: 'Group B', count: 4 },
+    { group: 'Group C', count: 3 },
+  ],
+  basketball: [
+    { group: 'Group A', count: 3 },
+    { group: 'Group B', count: 3 },
+  ],
+  volleyball: [
+    { group: 'Group A', count: 3 },
+    { group: 'Group B', count: 3 },
+  ],
+  // For badminton, we will handle grouping logic separately below
+};
+
+const COLUMNS = {
+  Futsal: ["Rank", "Team", "Played", "Wins", "Draws", "Losses", "GF", "GA", "GD", "Points"],
+  basketball: ["Rank", "Team", "Played", "Wins", "Losses", "Points For", "Points Against", "Points"],
+  volleyball: ["Rank", "Team", "Played", "Wins", "Losses", "Points"],
+  badminton_ganda_putra: ["Rank", "Name(s)", "Played", "Wins", "Losses", "Points"],
+  badminton_ganda_campuran: ["Rank", "Name(s)", "Played", "Wins", "Losses", "Points"],
+};
+
+const TITLES = {
+  Futsal: "Futsal Standings",
+  basketball: "Basketball Standings",
+  volleyball: "Volleyball Standings",
+  badminton_ganda_putra: "Badminton Ganda Putra",
+  badminton_ganda_campuran: "Badminton Ganda Campuran",
+};
 
 const ResultsCard = () => {
-  const [activeSport, setActiveSport] = useState('futsal');
+  const [activeSport, setActiveSport] = useState('Futsal');
+  const [teamsData, setTeamsData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [hoveredRow, setHoveredRow] = useState(null);
+  const { getEntry } = useApi();
+
+  // Fetch all teams for all sports on mount
+  useEffect(() => {
+    setLoading(true);
+    getEntry('/teams/').then((data) => {
+    console.log('All teams:', data);
+    setLoading(false);
+  });
+    Promise.all([
+      getEntry('/team?where=[["sport_branch","Futsal"]]'),
+      getEntry('/team?where=[["sport_branch","basketball"]]'),
+      getEntry('/team?where=[["sport_branch","volleyball"]]'),
+      getEntry('/team?where=[["sport_branch","badminton"]]'),
+    ]).then(([Futsal, basketball, volleyball, badminton]) => {
+      const sortByCreated = arr =>
+      (arr || []).slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      console.log('Futsal result:', Futsal?.result);  
+      setTeamsData({
+        Futsal: sortByCreated(Futsal?.result),
+        basketball: sortByCreated(basketball?.result),
+        volleyball: sortByCreated(volleyball?.result),
+        badminton: sortByCreated(badminton?.result),
+      });
+      setLoading(false);
+    });
+  }, [getEntry]);
+
+  // Helper to group teams according to rules
+  function groupTeams(teams, sport) {
+    if (sport === 'badminton_ganda_putra' || sport === 'badminton_ganda_campuran') {
+      // This is handled below in the badminton section
+      return {};
+    }
+    const rules = GROUP_RULES[sport];
+    let idx = 0;
+    const groups = {};
+    for (const rule of rules) {
+      groups[rule.group] = teams.slice(idx, idx + rule.count);
+      idx += rule.count;
+    }
+    return groups;
+  }
+
+  // Helper to sort teams (by points, then other rules)
+  function sortTeams(teams, sport) {
+    return [...teams].sort((a, b) => {
+      if ((b.points ?? 0) !== (a.points ?? 0)) return (b.points ?? 0) - (a.points ?? 0);
+      if (sport === 'Futsal') {
+        const aGD = (a.gf ?? 0) - (a.ga ?? 0);
+        const bGD = (b.gf ?? 0) - (b.ga ?? 0);
+        if (bGD !== aGD) return bGD - aGD;
+        return (b.gf ?? 0) - (a.gf ?? 0);
+      } else if (sport === 'basketball') {
+        const aPD = (a.pf ?? 0) - (a.pa ?? 0);
+        const bPD = (b.pf ?? 0) - (b.pa ?? 0);
+        if (bPD !== aPD) return bPD - aPD;
+        return (b.pf ?? 0) - (a.pf ?? 0);
+      } else if (
+        sport === 'badminton_ganda_putra' ||
+        sport === 'badminton_ganda_campuran'
+      ) {
+        return (b.wins ?? 0) - (a.wins ?? 0);
+      }
+      return 0;
+    }).map((team, idx) => ({
+      ...team,
+      rank: idx + 1,
+      ...(sport === 'Futsal' && { gd: (team.gf ?? 0) - (team.ga ?? 0) })
+    }));
+  }
+
+  // Special grouping for badminton
+  function groupBadmintonTeams(teams) {
+    // 1st 4: Ganda Putra, Group A
+    // 2nd 4: Ganda Putra, Group B
+    // 3rd 4: Ganda Putra, Group C
+    // 4th 4: Ganda Campuran, Group A
+    // 5th 4: Ganda Campuran, Group B
+    const groups = {
+      badminton_ganda_putra: {
+        'Group A': sortTeams(teams.slice(0, 4), 'badminton_ganda_putra'),
+        'Group B': sortTeams(teams.slice(4, 8), 'badminton_ganda_putra'),
+        'Group C': sortTeams(teams.slice(8, 12), 'badminton_ganda_putra'),
+      },
+      badminton_ganda_campuran: {
+        'Group A': sortTeams(teams.slice(12, 16), 'badminton_ganda_campuran'),
+        'Group B': sortTeams(teams.slice(16, 20), 'badminton_ganda_campuran'),
+      },
+    };
+    return groups;
+  }
+
+  if (loading) return <div style={{ textAlign: 'center', padding: 40 }}>Loading...</div>;
+
+  // Prepare grouped and sorted data for the active sport
+  let grouped = {};
+  if (activeSport === 'badminton_ganda_putra' || activeSport === 'badminton_ganda_campuran') {
+    const badmintonGroups = groupBadmintonTeams(teamsData['badminton'] || []);
+    grouped = badmintonGroups[activeSport];
+  } else {
+    grouped = groupTeams(teamsData[activeSport] || [], activeSport);
+    Object.keys(grouped).forEach(group => {
+      grouped[group] = sortTeams(grouped[group], activeSport);
+    });
+  }
 
   const styles = {
     container: {
@@ -82,219 +225,31 @@ const ResultsCard = () => {
     }
   };
 
-  // Raw sports data with groups
-  const sportsDataRaw = {
-    futsal: {
-      title: 'Futsal Standings',
-      columns: ["Rank", "Team", "Played", "Wins", "Draws", "Losses", "GF", "GA", "GD", "Points"],
-      groups: {
-        'Group A': [
-          { id: 1, team: 'Team A', played: 10, wins: 8, draws: 1, losses: 1, gf: 20, ga: 5, points: 25 },
-          { id: 2, team: 'Team B', played: 10, wins: 7, draws: 2, losses: 1, gf: 18, ga: 7, points: 23 },
-          { id: 3, team: 'Team C', played: 10, wins: 6, draws: 3, losses: 1, gf: 15, ga: 8, points: 21 }
-        ],
-        'Group B': [
-          { id: 4, team: 'Team D', played: 10, wins: 6, draws: 2, losses: 2, gf: 22, ga: 10, points: 20 },
-          { id: 5, team: 'Team E', played: 10, wins: 5, draws: 3, losses: 2, gf: 17, ga: 9, points: 18 },
-          { id: 6, team: 'Team F', played: 10, wins: 4, draws: 1, losses: 5, gf: 14, ga: 15, points: 13 }
-        ]
-      }
-    },
-    basketball: {
-      title: 'Basketball Standings',
-      columns: ["Rank", "Team", "Played", "Wins", "Losses", "Points For", "Points Against", "Points"],
-      groups: {
-        'Group A': [
-          { id: 1, team: 'Team A', played: 10, wins: 9, losses: 1, pf: 850, pa: 700, points: 18 },
-          { id: 2, team: 'Team B', played: 10, wins: 9, losses: 1, pf: 820, pa: 710, points: 18 },
-          { id: 3, team: 'Team C', played: 10, wins: 7, losses: 3, pf: 800, pa: 750, points: 14 }
-        ],
-        'Group B': [
-          { id: 4, team: 'Team D', played: 10, wins: 8, losses: 2, pf: 880, pa: 800, points: 16 },
-          { id: 5, team: 'Team E', played: 10, wins: 7, losses: 3, pf: 820, pa: 780, points: 14 },
-          { id: 6, team: 'Team F', played: 10, wins: 6, losses: 4, pf: 850, pa: 820, points: 12 }
-        ]
-      }
-    },
-    volleyball: {
-      title: 'Volleyball Standings',
-      columns: ["Rank", "Team", "Played", "Wins", "Losses", "Points"],
-      groups: {
-        'Group A': [
-          { id: 1, team: 'Team A', played: 10, wins: 9, losses: 1, points: 27 },
-          { id: 2, team: 'Team B', played: 10, wins: 9, losses: 1, points: 27 },
-          { id: 3, team: 'Team C', played: 10, wins: 8, losses: 2, points: 24 }
-        ],
-        'Group B': [
-          { id: 4, team: 'Team D', played: 10, wins: 7, losses: 3, points: 21 },
-          { id: 5, team: 'Team E', played: 10, wins: 6, losses: 4, points: 18 },
-          { id: 6, team: 'Team F', played: 10, wins: 5, losses: 5, points: 15 }
-        ]
-      }
-    },
-    badminton_ganda_putra: {
-      title: 'Badminton Ganda Putra',
-      columns: ["Rank", "Name(s)", "Played", "Wins", "Losses", "Points"],
-      groups: {
-        'Group A': [
-          { id: 1, team: 'Asu & Asi', played: 2, wins: 2, losses: 0, points: 2 },
-          { id: 2, team: 'Upin & Ipin', played: 2, wins: 1, losses: 1, points: 1 },
-          { id: 3, team: 'Prabowo & Gibran', played: 2, wins: 0, losses: 0, points: 0 }
-        ],
-        'Group B': [
-          { id: 4, team: 'Cowo & Cewe', played: 2, wins: 1, losses: 1, points: 1 },
-          { id: 5, team: 'Wowo & Wiwi', played: 2, wins: 0, losses: 0, points: 0 },
-          { id: 6, team: 'Adam & Eve', played: 2, wins: 2, losses: 0, points: 2 }
-        ],
-        'Group C': [
-          { id: 4, team: 'Cowo & Cewe', played: 2, wins: 1, losses: 1, points: 1 },
-          { id: 5, team: 'Wowo & Wiwi', played: 2, wins: 0, losses: 0, points: 0 },
-          { id: 6, team: 'Adam & Eve', played: 2, wins: 2, losses: 0, points: 2 }
-        ]
-      }
-    },
-    badminton_ganda_campuran: {
-      title: 'Badminton Ganda Campuran',
-      columns: ["Rank", "Name(s)", "Played", "Wins", "Losses", "Points"],
-      groups: {
-        'Group A': [
-          { id: 1, team: 'Asu & Asi', played: 2, wins: 2, losses: 0, points: 2 },
-          { id: 2, team: 'Upin & Ipin', played: 2, wins: 1, losses: 1, points: 1 },
-          { id: 3, team: 'Prabowo & Gibran', played: 2, wins: 0, losses: 0, points: 0 }
-        ],
-        'Group B': [
-          { id: 4, team: 'Cowo & Cewe', played: 2, wins: 1, losses: 1, points: 1 },
-          { id: 5, team: 'Wowo & Wiwi', played: 2, wins: 0, losses: 0, points: 0 },
-          { id: 6, team: 'Adam & Eve', played: 2, wins: 2, losses: 0, points: 2 }
-        ],
-        'Group C': [
-          { id: 4, team: 'Cowo & Cewe', played: 2, wins: 1, losses: 1, points: 1 },
-          { id: 5, team: 'Wowo & Wiwi', played: 2, wins: 0, losses: 0, points: 0 },
-          { id: 6, team: 'Adam & Eve', played: 2, wins: 2, losses: 0, points: 2 }
-        ]
-      }
-    }
-  };
-
-  // Sort teams within each group according to ranking rules
-  const sportsData = useMemo(() => {
-    const sortTeams = (teams, sport) => {
-      return [...teams].sort((a, b) => {
-        // First by points (descending)
-        if (b.points !== a.points) return b.points - a.points;
-        
-        if (sport === 'futsal') {
-          const aGD = a.gf - a.ga;
-          const bGD = b.gf - b.ga;
-          if (bGD !== aGD) return bGD - aGD;
-          return b.gf - a.gf;
-        } else if (sport === 'basketball') {
-          const aPD = a.pf - a.pa;
-          const bPD = b.pf - b.pa;
-          if (bPD !== aPD) return bPD - aPD;
-          return b.pf - a.pf;
-        } else if (sport === 'volleyball') {
-          const aSetDiff = a.setsWon - a.setsLost;
-          const bSetDiff = b.setsWon - b.setsLost;
-          if (bSetDiff !== aSetDiff) return bSetDiff - aSetDiff;
-          return b.setsWon - a.setsWon;
-        } else if (sport === 'badminton_ganda_putra') {
-          return b.wins - a.wins;
-        }else if (sport === 'badminton_ganda_campuran') {
-          return b.wins - a.wins;
-        }
-        return 0;
-      }).map((team, index) => ({
-        ...team,
-        rank: index + 1,
-        ...(sport === 'futsal' && { gd: team.gf - team.ga })
-      }));
-    };
-
-    return {
-      futsal: {
-        ...sportsDataRaw.futsal,
-        groups: Object.fromEntries(
-          Object.entries(sportsDataRaw.futsal.groups).map(([group, teams]) => [
-            group,
-            sortTeams(teams, 'futsal')
-          ])
-        )
-      },
-      basketball: {
-        ...sportsDataRaw.basketball,
-        groups: Object.fromEntries(
-          Object.entries(sportsDataRaw.basketball.groups).map(([group, teams]) => [
-            group,
-            sortTeams(teams, 'basketball')
-          ])
-        )
-      },
-      volleyball: {
-        ...sportsDataRaw.volleyball,
-        groups: Object.fromEntries(
-          Object.entries(sportsDataRaw.volleyball.groups).map(([group, teams]) => [
-            group,
-            sortTeams(teams, 'volleyball')
-          ])
-        )
-      },
-      badminton_ganda_putra: {
-        ...sportsDataRaw.badminton_ganda_putra,
-        groups: Object.fromEntries(
-          Object.entries(sportsDataRaw.badminton_ganda_putra.groups).map(([group, teams]) => [
-            group,
-            sortTeams(teams, 'badminton_ganda_putra')
-          ])
-        )
-      },
-      badminton_ganda_campuran: {
-        ...sportsDataRaw.badminton_ganda_campuran,
-        groups: Object.fromEntries(
-          Object.entries(sportsDataRaw.badminton_ganda_campuran.groups).map(([group, teams]) => [
-            group,
-            sortTeams(teams, 'badminton_ganda_campuran')
-          ])
-        )
-      }
-    };
-  }, []);
-
-  const handleSportChange = (sport) => {
-    setActiveSport(sport);
-  };
-
-  // Handle row hover state
-  const [hoveredRow, setHoveredRow] = useState(null);
-
   return (
     <div style={styles.container}>
       <h1 style={styles.header}>Sports Competition Results</h1>
-      
       <div style={styles.sportSelector}>
-        {Object.keys(sportsData).map((sport) => (
+        {Object.keys(COLUMNS).map((sport) => (
           <button
             key={sport}
             style={activeSport === sport ? styles.activeButton : styles.button}
-            onClick={() => handleSportChange(sport)}
+            onClick={() => setActiveSport(sport)}
           >
-            {sport.charAt(0).toUpperCase() + sport.slice(1)}
+            {TITLES[sport]}
           </button>
         ))}
       </div>
-      
       <div style={styles.standingsContainer}>
         <h2 style={{ textAlign: 'center', color: '#2c3e50', marginBottom: '20px' }}>
-          {sportsData[activeSport].title}
+          {TITLES[activeSport]}
         </h2>
-        
-        {Object.entries(sportsData[activeSport].groups).map(([groupName, teams]) => (
+        {Object.entries(grouped).map(([groupName, teams]) => (
           <div key={groupName} style={styles.groupContainer}>
             <h3 style={styles.groupHeader}>{groupName}</h3>
             <table style={styles.table}>
               <thead>
                 <tr>
-                  {sportsData[activeSport].columns.map((column, index) => (
+                  {COLUMNS[activeSport].map((column, index) => (
                     <th key={index} style={styles.th}>{column}</th>
                   ))}
                 </tr>
@@ -303,9 +258,8 @@ const ResultsCard = () => {
                 {teams.map((team, index) => {
                   const isEven = index % 2 === 0;
                   const isHovered = hoveredRow === team.id;
-                  
                   return (
-                    <tr 
+                    <tr
                       key={team.id}
                       style={{
                         ...styles.td,
@@ -316,48 +270,29 @@ const ResultsCard = () => {
                       onMouseEnter={() => setHoveredRow(team.id)}
                       onMouseLeave={() => setHoveredRow(null)}
                     >
-                      <td style={styles.td}>{team.rank}</td>
-                      <td style={styles.td}>{team.team}</td>
-                      <td style={styles.td}>{team.played}</td>
-                      <td style={styles.td}>{team.wins}</td>
-                      
-                      {activeSport === 'futsal' && (
-                        <>
-                          <td style={styles.td}>{team.draws}</td>
-                          <td style={styles.td}>{team.losses}</td>
-                          <td style={styles.td}>{team.gf}</td>
-                          <td style={styles.td}>{team.ga}</td>
-                          <td style={styles.td}>{team.gd}</td>
-                        </>
-                      )}
-                      
-                      {activeSport === 'basketball' && (
-                        <>
-                          <td style={styles.td}>{team.losses}</td>
-                          <td style={styles.td}>{team.pf}</td>
-                          <td style={styles.td}>{team.pa}</td>
-                        </>
-                      )}
-                      
-                      {activeSport === 'volleyball' && (
-                        <>
-                          <td style={styles.td}>{team.losses}</td>
-                        </>
-                      )}
-
-                      {activeSport === 'badminton_ganda_putra' && (
-                        <>
-                          <td style={styles.td}>{team.losses}</td>
-                        </>
-                      )}
-
-                      {activeSport === 'badminton_ganda_campuran' && (
-                        <>
-                          <td style={styles.td}>{team.losses}</td>
-                        </>
-                      )}
-                      
-                      <td style={styles.td}>{team.points}</td>
+                      {/* Render cells dynamically based on columns */}
+                      {COLUMNS[activeSport].map((column, colIdx) => {
+                        let value = '';
+                        switch (column) {
+                          case 'Rank': value = team.rank; break;
+                          case 'Team':
+                          case 'Name(s)': value = team.name || team.team; break;
+                          case 'Played': value = team.played ?? '-'; break;
+                          case 'Wins': value = team.wins ?? '-'; break;
+                          case 'Draws': value = team.draws ?? '-'; break;
+                          case 'Losses': value = team.losses ?? '-'; break;
+                          case 'GF': value = team.gf ?? '-'; break;
+                          case 'GA': value = team.ga ?? '-'; break;
+                          case 'GD': value = team.gd ?? '-'; break;
+                          case 'Points For': value = team.pf ?? '-'; break;
+                          case 'Points Against': value = team.pa ?? '-'; break;
+                          case 'Points': value = team.points ?? '-'; break;
+                          default: value = '';
+                        }
+                        return (
+                          <td key={colIdx} style={styles.td}>{value}</td>
+                        );
+                      })}
                     </tr>
                   );
                 })}

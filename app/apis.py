@@ -79,6 +79,7 @@ class MatchAPI(ModelRestApi):
     add_columns = [
         "competition",
         "sport_branch",
+        "group"
         "team_a",
         "team_b",
         "name",
@@ -91,6 +92,7 @@ class MatchAPI(ModelRestApi):
         "date",
         "competition",
         "sport_branch",
+        "group",
         "name",
         "description",
         "status",

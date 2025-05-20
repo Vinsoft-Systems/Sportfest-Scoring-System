@@ -97,6 +97,8 @@ class Match(Model, AuditMixin):
     )
     score_list: Mapped[dict] = mapped_column(JSON, nullable=True)
 
+    group: Mapped[str] = mapped_column(nullable=True)
+
     competition_id: Mapped[int] = mapped_column(
         ForeignKey("competitions.id"), nullable=False
     )

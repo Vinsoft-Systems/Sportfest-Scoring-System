@@ -12,6 +12,14 @@ export default function AdminMatches({ resource_name }) {
             sport_branch: {
               component: ({ componentProps }) => <SportBranchSelect componentProps={componentProps} type={'add'} />,
             },
+            group: {
+              component: ({ componentProps, state }) => (
+                <GroupSelect
+                  componentProps={componentProps}
+                  sport_branch={state?.data?.sport_branch}
+                />
+              ),
+            },
             team_a: {
               component: ({ componentProps }) => <TeamFinder componentProps={componentProps} type={'add'} />,
             },
@@ -25,6 +33,14 @@ export default function AdminMatches({ resource_name }) {
           edit: {
             sport_branch: {
               component: ({ componentProps }) => <SportBranchSelect componentProps={componentProps} type={'edit'} />,
+            },
+            group: {
+              component: ({ componentProps, state }) => (
+                <GroupSelect
+                  componentProps={componentProps}
+                  sport_branch={state?.data?.sport_branch}
+                />
+              ),
             },
             team_a: {
               component: ({ componentProps }) => <TeamFinder componentProps={componentProps} type={'edit'} />,
