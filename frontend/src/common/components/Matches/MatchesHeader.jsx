@@ -1,25 +1,16 @@
 import { useState } from 'react';
 import { formatDateNoTime } from '../../Base/utils/utils';
-import {
-  Container,
-  SimpleGrid,
-  Tabs,
-  Group,
-  Select,
-  Box,
-  Flex,
-  Title,
-} from '@mantine/core';
+import { Container, SimpleGrid, Tabs, Group, Select, Box, Flex, Title } from '@mantine/core';
 import classes from './MatchesHeader.module.css';
-import MatchCard from '@/common/components/Match/MatchCard'
+import MatchCard from '@/common/components/Match/MatchCard';
 import { useNavigate } from 'react-router-dom';
 import { IconFilterSearch, IconSortAscending } from '@tabler/icons-react';
 
-export function MatchesHeader({tabs, matches}) {
+export function MatchesHeader({ tabs, matches }) {
   const navigate = useNavigate();
   const [filterStatus, setFilterStatus] = useState('all');
   const [sortBy, setSortBy] = useState('time');
-  
+
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.value} key={tab.value}>
       {formatDateNoTime(tab.label)}
@@ -28,7 +19,7 @@ export function MatchesHeader({tabs, matches}) {
 
   const onClickMatch = (match) => {
     const matchId = match.id || match.id_;
-    
+
     if (matchId) {
       console.log('Navigating to match ID:', matchId);
       navigate(`/match/${matchId}`);
@@ -36,17 +27,17 @@ export function MatchesHeader({tabs, matches}) {
       console.error('Cannot navigate: Match ID not found', match);
       console.log('Match object:', match);
     }
-  }
+  };
 
   const getFilteredAndSortedMatches = (dateKey) => {
     if (!matches[dateKey]) return [];
-    
+
     let filteredMatches = [...matches[dateKey]];
-    
+
     if (filterStatus !== 'all') {
-      filteredMatches = filteredMatches.filter(match => match.status === filterStatus);
+      filteredMatches = filteredMatches.filter((match) => match.status === filterStatus);
     }
-    
+
     filteredMatches.sort((a, b) => {
       if (sortBy === 'time') {
         return new Date(a.date) - new Date(b.date);
@@ -55,33 +46,33 @@ export function MatchesHeader({tabs, matches}) {
       }
       return 0;
     });
-    
+
     return filteredMatches;
   };
-  
+
   const getStatusOptions = () => {
     const statuses = new Set(['all']);
-    
-    Object.values(matches).forEach(dateMatches => {
-      dateMatches.forEach(match => {
+
+    Object.values(matches).forEach((dateMatches) => {
+      dateMatches.forEach((match) => {
         statuses.add(match.status);
       });
     });
-    
-    return Array.from(statuses).map(status => ({
+
+    return Array.from(statuses).map((status) => ({
       value: status,
-      label: status === 'all' ? 'All Statuses' : status
+      label: status === 'all' ? 'All Statuses' : status,
     }));
   };
 
   return (
     <div className={classes.header}>
       <Container className={classes.mainSection} size="md">
-        <Flex 
-          direction={{ base: 'column', sm: 'row' }} 
-          justify="space-between" 
+        <Flex
+          direction={{ base: 'column', sm: 'row' }}
+          justify="space-between"
           align={{ base: 'stretch', sm: 'center' }}
-          my="md" 
+          my="md"
           gap="sm"
         >
           <Title order={4}>Matches</Title>
@@ -95,14 +86,14 @@ export function MatchesHeader({tabs, matches}) {
               onChange={setFilterStatus}
               className={classes.filterSelect}
             />
-            
+
             <Select
               size="sm"
               leftSection={<IconSortAscending size={16} />}
               placeholder="Sort by"
               data={[
                 { value: 'time', label: 'Sort by time' },
-                { value: 'sport', label: 'Sort by sport branch' }
+                { value: 'sport', label: 'Sort by sport branch' },
               ]}
               value={sortBy}
               onChange={setSortBy}
@@ -111,7 +102,7 @@ export function MatchesHeader({tabs, matches}) {
           </Group>
         </Flex>
       </Container>
-      
+
       <Container size="md">
         <Tabs
           defaultValue={tabs && tabs.length > 0 ? tabs[0].value : null}
@@ -126,24 +117,22 @@ export function MatchesHeader({tabs, matches}) {
 
           {tabs.map((tab) => {
             const filteredMatches = getFilteredAndSortedMatches(tab.value);
-            
+
             return (
               <Tabs.Panel value={tab.value} key={tab.value}>
                 {filteredMatches.length === 0 ? (
-                  <Box py="xl" ta="center">No matches found with the selected filters.</Box>
+                  <Box py="xl" ta="center">
+                    No matches found with the selected filters.
+                  </Box>
                 ) : (
-                  <SimpleGrid 
+                  <SimpleGrid
                     cols={{ base: 1, sm: 2, md: 3 }}
                     spacing={{ base: 'md', sm: 'lg' }}
                     verticalSpacing={{ base: 'md', sm: 'lg' }}
                     mt="xl"
                   >
                     {filteredMatches.map((match) => (
-                      <MatchCard 
-                        key={match.id} 
-                        match={match} 
-                        onClick={() => onClickMatch(match)}
-                      />
+                      <MatchCard key={match.id} match={match} onClick={() => onClickMatch(match)} />
                     ))}
                   </SimpleGrid>
                 )}

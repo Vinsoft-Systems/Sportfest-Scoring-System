@@ -8,24 +8,24 @@ export default function MainFrame({ showNavbar }) {
   const { getPageHeight, navbarWidth, padding, isNavbarOpened, toggleNavbar } = useSize();
 
   return (
-      <AppShell
-          padding={rem(padding)}
-          navbar={showNavbar ? { width: `calc(${rem(navbarWidth)} + 1px)` } : undefined}
-          header={{ height: 70 }}
-      >
-        <AppShellHeader>
-          <HeaderLogo />
-        </AppShellHeader>
+    <AppShell
+      padding={rem(padding)}
+      navbar={showNavbar ? { width: `calc(${rem(navbarWidth)} + 1px)` } : undefined}
+      header={{ height: 70 }}
+    >
+      <AppShellHeader>
+        <HeaderLogo />
+      </AppShellHeader>
 
-        {showNavbar && (
-            <AppShell.Navbar>
-              <Navbar open={isNavbarOpened} toggle={toggleNavbar} />
-            </AppShell.Navbar>
-        )}
+      {showNavbar && (
+        <AppShell.Navbar>
+          <Navbar open={isNavbarOpened} toggle={toggleNavbar} />
+        </AppShell.Navbar>
+      )}
 
-        <AppShell.Main h={getPageHeight()} style={{ overflow: 'auto' }}>
-          <Outlet />
-        </AppShell.Main>
-      </AppShell>
+      <AppShell.Main h={getPageHeight()} style={{ overflow: 'auto' }}>
+        <Outlet />
+      </AppShell.Main>
+    </AppShell>
   );
 }

@@ -17,7 +17,7 @@ export default function AdminTeams({ resource_name }) {
             profile_picture: {
               type: 'file',
               accept: 'image/*',
-            }
+            },
           },
           edit: {
             sport_branch: {
@@ -29,7 +29,7 @@ export default function AdminTeams({ resource_name }) {
             profile_picture: {
               type: 'file',
               accept: 'image/*',
-            }
+            },
           },
         }}
       />

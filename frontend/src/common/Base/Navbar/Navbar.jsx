@@ -15,8 +15,7 @@ export default function Navbar({ open, toggle }) {
   const { navbarWidth } = useSize();
   const [activeLink, setActiveLink] = React.useState(location.pathname);
   const { height, ref } = useElementSize();
-  const isAdminRoute = location.pathname.startsWith('/admin'); 
-
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   const goldenRatio = useMemo(() => `calc(calc(100% - ${rem(height)}) * 0.382)`, [height]);
 
@@ -25,7 +24,7 @@ export default function Navbar({ open, toggle }) {
   }, [location]);
 
   const routeFilter = useMemo(() => {
-    return Object.values(routes).filter(route => {
+    return Object.values(routes).filter((route) => {
       if (isAdminRoute) {
         return route.path.startsWith('/admin');
       } else {
@@ -75,15 +74,13 @@ export default function Navbar({ open, toggle }) {
           </Box>
         </Group>
 
-
         {isAdminRoute ? (
           <Box h={USER_MENU_HEIGHT} bottom={0} w="100%" p="xs" bg="main">
             <UserMenu open={open} />
           </Box>
         ) : (
-          <Box h={USER_MENU_HEIGHT} bottom={0} w="100%" p="xs">
-          </Box>
-        )}        
+          <Box h={USER_MENU_HEIGHT} bottom={0} w="100%" p="xs"></Box>
+        )}
       </Stack>
     </>
   );
