@@ -1,4 +1,4 @@
-import { Flex, Text, Image, Title, Loader } from '@mantine/core';
+import {Flex, Text, Image, Loader, Title, Tooltip} from '@mantine/core';
 import { useState, useEffect } from 'react';
 import classes from './HeaderLogo.module.css';
 
@@ -8,7 +8,7 @@ import ppiJermanLogo from '../../assets/ppijerman.png';
 import merpatiLogo from '../../assets/merpati.jpg';
 
 export function HeaderLogo() {
-  const [competitionName, setCompetitionName] = useState("Sportfest 2025");
+  const [competitionName, setCompetitionName] = useState("Frada Cup 2025");
   const [loading, setLoading] = useState(true);
   
 
@@ -30,14 +30,6 @@ export function HeaderLogo() {
   return (
     <header className={classes.header}>
       <Flex justify="space-between" align="center" w="100%" h="100%">
-        <Flex align="center" gap="3" direction={'column'}>
-          <Text fw={500} size="10px" c="white">Sponsored By:</Text>
-          <Flex align="center" gap="xs">
-            <Image h={30} src={indoexpressLogo} alt="IndoExpress" />
-            <Image h={30} src={warindoLogo} alt="Warindo" />
-          </Flex>
-        </Flex>
-
         {loading ? (
           <Loader color="white" size="sm" />
         ) : (
@@ -47,12 +39,30 @@ export function HeaderLogo() {
                 size='lg'
                 >{competitionName}</Text>
         )}
+        <Flex gap={"xl"}>
+          <Flex align="center" gap="3" direction={'column'}>
+            <Title fw={500} order={5} c="white">Sponsored By</Title>
+            <Flex align="center" gap="xs">
+              <Tooltip label={"IndoExpress"}>
+                <Image h={30} src={indoexpressLogo} alt="IndoExpress" />
+              </Tooltip>
+              <Tooltip label={"Warindo"}>
+                <Image h={30} src={warindoLogo} alt="Warindo" />
+              </Tooltip>
+            </Flex>
+          </Flex>
 
-        <Flex align="center" gap="3" direction={'column'}>
-          <Text fw={500} size="10px" c="white">Supported By:</Text>
-          <Flex align="center" gap="xs">
-            <Image h={30} src={ppiJermanLogo} alt="PPI Jerman" />
-            <Image h={30} src={merpatiLogo} alt="Merpati" />
+          <Flex align="center" gap="3" direction={'column'}>
+            <Title fw={500} order={5} c="white">Supported By</Title>
+            <Flex align="center" gap="md">
+              <Tooltip label={"PPI Jerman"}>
+                <Image h={30} src={ppiJermanLogo} alt="PPI Jerman" />
+              </Tooltip>
+              <Tooltip label={"Merpati E.V."}>
+                <Image h={30} src={merpatiLogo} alt="Merpati" />
+              </Tooltip>
+
+            </Flex>
           </Flex>
         </Flex>
       </Flex>
