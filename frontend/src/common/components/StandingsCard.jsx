@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 
-const ResultsCard = () => {
+const StandingsCard = () => {
   const [activeSport, setActiveSport] = useState('futsal');
 
   const styles = {
@@ -327,4 +327,4 @@ const ResultsCard = () => {
   );
 };
 
-export default ResultsCard;
+export default StandingsCard;

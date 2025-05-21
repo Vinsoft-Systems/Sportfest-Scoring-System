@@ -8,7 +8,7 @@ import AdminCompetitions from '@/features/pages/admin/AdminCompetitions.jsx';
 import { IconAwardFilled } from '@tabler/icons-react';
 import Matches from '@/features/pages/Matches.jsx'
 import Match from '@/features/pages/Match.jsx';
-import Results from './common/components/ResultsCard';
+import Results from './common/components/StandingsCard.jsx';
 import { IconScoreboard } from '@tabler/icons-react';
 import AdminGroups from "@/features/pages/admin/AdminGroups.jsx";
 
@@ -44,8 +44,8 @@ export const routes = {
     Element: Match
   },
   result: {
-    path: '/results',
-    name: 'Result',
+    path: '/standings',
+    name: 'Standings',
     Icon: IconScoreboard,
     Element: Results,
     isPublic: true,
