@@ -9,7 +9,6 @@ import { useLocation } from 'react-router-dom';
 import Logo from '../Logo';
 import NavItem from './NavItem';
 import classes from './navbar.module.css';
-import { isAction } from '@reduxjs/toolkit';
 
 export default function Navbar({ open, toggle }) {
   const location = useLocation();
