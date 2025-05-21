@@ -1,4 +1,4 @@
-import React from 'react';
+import 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Center, Flex, SimpleGrid, Text} from '@mantine/core';
@@ -53,7 +53,6 @@ function MatchData() {
             <MatchCard 
               key={match.id} 
               match={match} 
-              withScore={false}
               onClick={() => onClickMatch(match)}
             />
           ) : null

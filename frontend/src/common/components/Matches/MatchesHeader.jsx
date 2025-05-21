@@ -142,8 +142,7 @@ export function MatchesHeader({tabs, matches}) {
                       <MatchCard 
                         key={match.id} 
                         match={match} 
-                        withScore={true}
-                        onClick={() => onClickMatch(match)} 
+                        onClick={() => onClickMatch(match)}
                       />
                     ))}
                   </SimpleGrid>

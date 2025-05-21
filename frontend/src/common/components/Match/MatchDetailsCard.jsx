@@ -21,16 +21,6 @@ export default function MatchDetailsCard({ match, teamADetails, teamBDetails, wi
     }
   };
 
-  const formatScore = () => {
-    if (score_list && score_list.length > 0) {
-      if (score_list[0].includes(':')) {
-        return score_list[0].replace(':', ' - ');
-      }
-      return `${score_list[0] || '0'} - ${score_list[1] || '0'}`;
-    }
-    return 'VS';
-  };
-
   const getIndividualScores = () => {
     if (!score_list || score_list.length <= 1) return [];
     
@@ -113,16 +103,21 @@ export default function MatchDetailsCard({ match, teamADetails, teamBDetails, wi
             }}
           >
             <IconBallFootball size={16} style={{ opacity: 0.6, marginBottom: 6 }} />
-            <Title 
-              order={1} 
-              style={{ 
+            <Grid
+              style={{
                 fontSize: '24px', 
                 fontWeight: 700,
                 marginBottom: withBO3 && score_list && score_list.length > 1 ? '4px' : '0'
               }}
             >
-              {formatScore()}
-            </Title>
+                {
+                    score_list?.map((score, index) => (
+                        <Grid.Col span={12} key={index}>
+                            <Text fw={800} size="md" ta="center">{score_list?. length > 1 ? "Set " + (index + 1) + ': ' : null} {score}</Text>
+                        </Grid.Col>
+                    ))
+                }
+            </Grid>
 
             {withBO3 && getIndividualScores().length > 0 && (
               <Flex direction="column" gap={4} mt={0} wrap="wrap" justify="center">
