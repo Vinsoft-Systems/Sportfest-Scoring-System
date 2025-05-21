@@ -1,11 +1,66 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { useApi, ApiProvider } from 'fastapi-rtk';
 
-const StandingsCard = () => {
-  const [activeSport, setActiveSport] = useState('futsal');
+const GROUP_LABELS = {
+  Futsal: ['A', 'B', 'C'],
+  Volleyball: ['A', 'B'],
+  Basketball: ['A', 'B'],
+  'Badminton Ganda Putra': ['A', 'B', 'C'],
+  'Badminton Ganda Campuran': ['A', 'B'],
+};
+
+const COLUMNS = {
+  Futsal: ['Rank', 'Team', 'Match Played', 'Win', 'Draw', 'Loss', 'GA', 'GF', 'GD', 'Points'],
+  Volleyball: ['Rank', 'Team', 'Players'],
+  Basketball: ['Rank', 'Team', 'Match Played', 'Win', 'Loss', 'Points'],
+  'Badminton Ganda Putra': ['Rank', 'Team', 'Players'],
+  'Badminton Ganda Campuran': ['Rank', 'Team', 'Players'],
+};
+
+function StandingsCard({ sportBranch = 'Futsal' }) {
+  const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeSport, setActiveSport] = useState(sportBranch);
+  const { getEntry } = useApi();
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/v1/team/teams_by_competition/1/${activeSport}`)
+      .then(res => res.json())
+      .then(data => {
+        setTeams(data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [activeSport]);
+
+  // Group teams by group name (A, B, C, etc.)
+  const groupedTeams = useMemo(() => {
+    const groups = {};
+    teams.forEach((team, idx) => {
+      const groupName = team.group?.name || 'No Group';
+      if (!groups[groupName]) groups[groupName] = [];
+      groups[groupName].push({
+        ...team,
+        rank: groups[groupName].length + 1,
+      });
+    });
+
+    // Sort groups by GROUP_LABELS order if available
+    const orderedGroups = {};
+    (GROUP_LABELS[activeSport] || Object.keys(groups)).forEach((label) => {
+      if (groups[label]) orderedGroups[`Group ${label}`] = groups[label];
+    });
+    // Add any other groups not in GROUP_LABELS
+    Object.keys(groups).forEach((label) => {
+      if (!orderedGroups[`Group ${label}`]) orderedGroups[`Group ${label}`] = groups[label];
+    });
+    return orderedGroups;
+  }, [teams, activeSport]);
 
   const styles = {
     container: {
-      maxWidth: '1200px',
+      maxWidth: '900px',
       margin: '0 auto',
       padding: '20px',
       fontFamily: 'Arial, sans-serif',
@@ -82,248 +137,96 @@ const StandingsCard = () => {
     },
   };
 
-  // Raw sports data with groups
-  const sportsDataRaw = {
-    futsal: {
-      title: 'Futsal Standings',
-      columns: ['Rank', 'Team', 'Played', 'Wins', 'Draws', 'Losses', 'GF', 'GA', 'GD', 'Points'],
-      groups: {
-        'Group A': [
-          { id: 1, team: 'Team A', played: 10, wins: 8, draws: 1, losses: 1, gf: 20, ga: 5, points: 25 },
-          { id: 2, team: 'Team B', played: 10, wins: 7, draws: 2, losses: 1, gf: 18, ga: 7, points: 23 },
-          { id: 3, team: 'Team C', played: 10, wins: 6, draws: 3, losses: 1, gf: 15, ga: 8, points: 21 },
-        ],
-        'Group B': [
-          { id: 4, team: 'Team D', played: 10, wins: 6, draws: 2, losses: 2, gf: 22, ga: 10, points: 20 },
-          { id: 5, team: 'Team E', played: 10, wins: 5, draws: 3, losses: 2, gf: 17, ga: 9, points: 18 },
-          { id: 6, team: 'Team F', played: 10, wins: 4, draws: 1, losses: 5, gf: 14, ga: 15, points: 13 },
-        ],
-      },
-    },
-    basketball: {
-      title: 'Basketball Standings',
-      columns: ['Rank', 'Team', 'Played', 'Wins', 'Losses', 'Points For', 'Points Against', 'Points'],
-      groups: {
-        'Group A': [
-          { id: 1, team: 'Team A', played: 10, wins: 9, losses: 1, pf: 850, pa: 700, points: 18 },
-          { id: 2, team: 'Team B', played: 10, wins: 9, losses: 1, pf: 820, pa: 710, points: 18 },
-          { id: 3, team: 'Team C', played: 10, wins: 7, losses: 3, pf: 800, pa: 750, points: 14 },
-        ],
-        'Group B': [
-          { id: 4, team: 'Team D', played: 10, wins: 8, losses: 2, pf: 880, pa: 800, points: 16 },
-          { id: 5, team: 'Team E', played: 10, wins: 7, losses: 3, pf: 820, pa: 780, points: 14 },
-          { id: 6, team: 'Team F', played: 10, wins: 6, losses: 4, pf: 850, pa: 820, points: 12 },
-        ],
-      },
-    },
-    volleyball: {
-      title: 'Volleyball Standings',
-      columns: ['Rank', 'Team', 'Played', 'Wins', 'Losses', 'Points'],
-      groups: {
-        'Group A': [
-          { id: 1, team: 'Team A', played: 10, wins: 9, losses: 1, points: 27 },
-          { id: 2, team: 'Team B', played: 10, wins: 9, losses: 1, points: 27 },
-          { id: 3, team: 'Team C', played: 10, wins: 8, losses: 2, points: 24 },
-        ],
-        'Group B': [
-          { id: 4, team: 'Team D', played: 10, wins: 7, losses: 3, points: 21 },
-          { id: 5, team: 'Team E', played: 10, wins: 6, losses: 4, points: 18 },
-          { id: 6, team: 'Team F', played: 10, wins: 5, losses: 5, points: 15 },
-        ],
-      },
-    },
-    badminton: {
-      title: 'Badminton Standings',
-      columns: ['Rank', 'Name(s)', 'Played', 'Wins', 'Losses', 'Points'],
-      groups: {
-        'Ganda Putra': [
-          { id: 1, team: 'Asu & Asi', played: 2, wins: 2, losses: 0, points: 2 },
-          { id: 2, team: 'Upin & Ipin', played: 2, wins: 1, losses: 1, points: 1 },
-          { id: 3, team: 'Prabowo & Gibran', played: 2, wins: 0, losses: 0, points: 0 },
-        ],
-        'Ganda Campuran': [
-          { id: 4, team: 'Cowo & Cewe', played: 2, wins: 1, losses: 1, points: 1 },
-          { id: 5, team: 'Wowo & Wiwi', played: 2, wins: 0, losses: 0, points: 0 },
-          { id: 6, team: 'Adam & Eve', played: 2, wins: 2, losses: 0, points: 2 },
-        ],
-      },
-    },
-  };
-
-  // Sort teams within each group according to ranking rules
-  const sportsData = useMemo(() => {
-    const sortTeams = (teams, sport) => {
-      return [...teams]
-        .sort((a, b) => {
-          // First by points (descending)
-          if (b.points !== a.points) return b.points - a.points;
-
-          if (sport === 'futsal') {
-            const aGD = a.gf - a.ga;
-            const bGD = b.gf - b.ga;
-            if (bGD !== aGD) return bGD - aGD;
-            return b.gf - a.gf;
-          } else if (sport === 'basketball') {
-            const aPD = a.pf - a.pa;
-            const bPD = b.pf - b.pa;
-            if (bPD !== aPD) return bPD - aPD;
-            return b.pf - a.pf;
-          } else if (sport === 'volleyball') {
-            const aSetDiff = a.setsWon - a.setsLost;
-            const bSetDiff = b.setsWon - b.setsLost;
-            if (bSetDiff !== aSetDiff) return bSetDiff - aSetDiff;
-            return b.setsWon - a.setsWon;
-          } else if (sport === 'badminton') {
-            return b.wins - a.wins;
-          }
-          return 0;
-        })
-        .map((team, index) => ({
-          ...team,
-          rank: index + 1,
-          ...(sport === 'futsal' && { gd: team.gf - team.ga }),
-        }));
-    };
-
-    return {
-      futsal: {
-        ...sportsDataRaw.futsal,
-        groups: Object.fromEntries(
-          Object.entries(sportsDataRaw.futsal.groups).map(([group, teams]) => [group, sortTeams(teams, 'futsal')]),
-        ),
-      },
-      basketball: {
-        ...sportsDataRaw.basketball,
-        groups: Object.fromEntries(
-          Object.entries(sportsDataRaw.basketball.groups).map(([group, teams]) => [
-            group,
-            sortTeams(teams, 'basketball'),
-          ]),
-        ),
-      },
-      volleyball: {
-        ...sportsDataRaw.volleyball,
-        groups: Object.fromEntries(
-          Object.entries(sportsDataRaw.volleyball.groups).map(([group, teams]) => [
-            group,
-            sortTeams(teams, 'volleyball'),
-          ]),
-        ),
-      },
-      badminton: {
-        ...sportsDataRaw.badminton,
-        groups: Object.fromEntries(
-          Object.entries(sportsDataRaw.badminton.groups).map(([group, teams]) => [
-            group,
-            sortTeams(teams, 'badminton'),
-          ]),
-        ),
-      },
-    };
-  }, []);
-
-  const handleSportChange = (sport) => {
-    setActiveSport(sport);
-  };
-
-  // Handle row hover state
+  const sportBranches = Object.keys(GROUP_LABELS);
   const [hoveredRow, setHoveredRow] = useState(null);
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.header}>Sports Competition Results</h1>
-
+      <h1 style={styles.header}>Sports Competition Standings</h1>
       <div style={styles.sportSelector}>
-        {Object.keys(sportsData).map((sport) => (
+        {sportBranches.map((sport) => (
           <button
             key={sport}
             style={activeSport === sport ? styles.activeButton : styles.button}
-            onClick={() => handleSportChange(sport)}
+            onClick={() => setActiveSport(sport)}
           >
-            {sport.charAt(0).toUpperCase() + sport.slice(1)}
+            {sport}
           </button>
         ))}
       </div>
-
       <div style={styles.standingsContainer}>
-        <h2 style={{ textAlign: 'center', color: '#2c3e50', marginBottom: '20px' }}>{sportsData[activeSport].title}</h2>
-
-        {Object.entries(sportsData[activeSport].groups).map(([groupName, teams]) => (
-          <div key={groupName} style={styles.groupContainer}>
-            <h3 style={styles.groupHeader}>{groupName}</h3>
-            <table style={styles.table}>
-              <thead>
-                <tr>
-                  {sportsData[activeSport].columns.map((column, index) => (
-                    <th key={index} style={styles.th}>
-                      {column}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {teams.map((team, index) => {
-                  const isEven = index % 2 === 0;
-                  const isHovered = hoveredRow === team.id;
-
-                  return (
-                    <tr
-                      key={team.id}
-                      style={{
-                        ...styles.td,
-                        ...(isEven ? styles.evenRow : {}),
-                        ...(isHovered ? styles.hoverRow : {}),
-                        transition: 'background-color 0.2s ease',
-                      }}
-                      onMouseEnter={() => setHoveredRow(team.id)}
-                      onMouseLeave={() => setHoveredRow(null)}
-                    >
-                      <td style={styles.td}>{team.rank}</td>
-                      <td style={styles.td}>{team.team}</td>
-                      <td style={styles.td}>{team.played}</td>
-                      <td style={styles.td}>{team.wins}</td>
-
-                      {activeSport === 'futsal' && (
-                        <>
-                          <td style={styles.td}>{team.draws}</td>
-                          <td style={styles.td}>{team.losses}</td>
-                          <td style={styles.td}>{team.gf}</td>
-                          <td style={styles.td}>{team.ga}</td>
-                          <td style={styles.td}>{team.gd}</td>
-                        </>
-                      )}
-
-                      {activeSport === 'basketball' && (
-                        <>
-                          <td style={styles.td}>{team.losses}</td>
-                          <td style={styles.td}>{team.pf}</td>
-                          <td style={styles.td}>{team.pa}</td>
-                        </>
-                      )}
-
-                      {activeSport === 'volleyball' && (
-                        <>
-                          <td style={styles.td}>{team.losses}</td>
-                        </>
-                      )}
-
-                      {activeSport === 'badminton' && (
-                        <>
-                          <td style={styles.td}>{team.losses}</td>
-                        </>
-                      )}
-
-                      <td style={styles.td}>{team.points}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        ))}
+        <h2 style={{ textAlign: 'center', color: '#2c3e50', marginBottom: '20px' }}>
+          {activeSport} Standings
+        </h2>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: 40 }}>Loading...</div>
+        ) : (
+          Object.entries(groupedTeams).map(([groupName, teams]) => (
+            <div key={groupName} style={styles.groupContainer}>
+              <h3 style={styles.groupHeader}>{groupName}</h3>
+              <table style={styles.table}>
+                <thead>
+                  <tr>
+                    {COLUMNS[activeSport].map((column, index) => (
+                      <th key={index} style={styles.th}>
+                        {column}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {teams.map((team, index) => {
+                    const isEven = index % 2 === 0;
+                    const isHovered = hoveredRow === (team.id || team.value);
+                    return (
+                      <tr
+                        key={team.id || team.value}
+                        style={{
+                          ...styles.td,
+                          ...(isEven ? styles.evenRow : {}),
+                          ...(isHovered ? styles.hoverRow : {}),
+                          transition: 'background-color 0.2s ease',
+                        }}
+                        onMouseEnter={() => setHoveredRow(team.id || team.value)}
+                        onMouseLeave={() => setHoveredRow(null)}
+                      >
+                        <td style={styles.td}>{team.rank}</td>
+                        <td style={styles.td}>{team.label}</td>
+                        {activeSport === 'Futsal' ? (
+                          <>
+                            <td style={styles.td}>0</td>
+                            <td style={styles.td}>0</td>
+                            <td style={styles.td}>0</td>
+                            <td style={styles.td}>0</td>
+                            <td style={styles.td}>0</td>
+                            <td style={styles.td}>0</td>
+                            <td style={styles.td}>0</td>
+                            <td style={styles.td}>0</td>
+                          </>
+                        ) : (
+                          <td style={styles.td}>
+                            {Array.isArray(team.players) ? team.players.join(', ') : ''}
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
-};
+}
 
-export default StandingsCard;
+function Standings() {
+  return (
+    <ApiProvider resource_name="team">
+      <StandingsCard />
+    </ApiProvider>
+  );
+}
+
+export default Standings;
