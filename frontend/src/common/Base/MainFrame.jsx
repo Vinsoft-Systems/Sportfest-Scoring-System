@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar/Navbar';
 import { HeaderLogo } from '../components/HeaderLogo/HeaderLogo';
 
-export default function MainFrame({ showNavbar, showHeader }) {
+export default function MainFrame({ showNavbar }) {
   const { getPageHeight, navbarWidth, padding, isNavbarOpened, toggleNavbar } = useSize();
 
   return (

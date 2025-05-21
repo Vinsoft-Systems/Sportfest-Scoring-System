@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ApiProvider, useApi } from 'fastapi-rtk';
 import { Center, Loader, Text, Container } from '@mantine/core';

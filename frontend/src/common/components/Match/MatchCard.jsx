@@ -18,7 +18,7 @@ export default function MatchCard({ match, onClick }) {
         }
     };
 
-    const { id_, name, description, date, sport_branch, status, score_list, team_a, team_b, competition } = match;
+    const { name, date, sport_branch, status, score_list, team_a, team_b } = match;
 
     return (
         <>
@@ -52,7 +52,7 @@ export default function MatchCard({ match, onClick }) {
             </Flex> */}
 
             <Grid pb="md" justify='center' align='center' >
-                <Grid.Col span="auto" ><Text fw={600} size="sm"ta="center">{team_a.name}</Text></Grid.Col>
+                <Grid.Col span="auto" ><Text fw={600} size="sm" ta="center">{team_a.name}</Text></Grid.Col>
                 <Grid.Col span="auto"><Text fw={800} size="md" ta="center"> vs </Text></Grid.Col>
                 <Grid.Col span="auto"><Text fw={600} size="sm" ta="center">{team_b.name}</Text></Grid.Col>
             </Grid>

@@ -1,10 +1,9 @@
-import React from 'react';
-import { Card, Text, Group, Grid, Divider, Title, Paper, Badge, Avatar, Box, Flex, Stack, Center, Table } from '@mantine/core';
+import { Card, Text, Group, Grid, Divider, Badge, Avatar, Box, Flex, Stack, Center, Table } from '@mantine/core';
 import { formatDate } from '../../Base/utils/utils';
-import { IconBallFootball, IconMapPin, IconInfoCircle } from '@tabler/icons-react';
+import { IconBallFootball, IconInfoCircle } from '@tabler/icons-react';
 
 export default function MatchDetailsCard({ match, teamADetails, teamBDetails, withBO3}) {
-  const { name, description, date, sport_branch, status, score_list, competition, location, match_notes } = match;
+  const { name, description, date, sport_branch, status, score_list} = match;
 
   const getStatusColor = (status) => {
     switch (status) {
