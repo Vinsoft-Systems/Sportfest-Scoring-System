@@ -1,7 +1,7 @@
 from datetime import datetime
 import enum
 from fastapi_rtk import JSONFileColumns, Model
-from sqlalchemy import JSON, DateTime, ForeignKey
+from sqlalchemy import JSON, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 
@@ -45,6 +45,11 @@ class Competition(Model, AuditMixin):
         back_populates="competition",
     )
 
+    groups: Mapped[list["Match"]] = relationship(
+        "Group",
+        back_populates="competition",
+    )
+
 
 class Team(Model, AuditMixin):
     __tablename__ = "teams"
@@ -74,6 +79,14 @@ class Team(Model, AuditMixin):
         "Match",
         foreign_keys="Match.team_b_id",
         back_populates="team_b",
+    )
+
+    group_id: Mapped[int] = mapped_column(
+        ForeignKey("groups.id"), nullable=True
+    )
+    group: Mapped["Group"] = relationship(
+        "Group",
+        back_populates="teams",
     )
 
 
@@ -115,4 +128,43 @@ class Match(Model, AuditMixin):
         "Team",
         foreign_keys=[team_b_id],
         back_populates="matches_as_team_b",
+    )
+
+    group_id: Mapped[int] = mapped_column(
+        ForeignKey("groups.id"), nullable=True
+    )
+    group: Mapped["Group"] = relationship(
+        "Group",
+        back_populates="matches",
+    )
+
+class Group(Model, AuditMixin):
+    __tablename__ = "groups"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str]
+    sport_branch: Mapped[str]
+
+    # Composite unique constraint: no two groups with same name in the same sport branch
+    __table_args__ = (
+        UniqueConstraint("name", "sport_branch", name="uq_group_name_sport_branch"),
+    )
+
+
+    competition_id: Mapped[int] = mapped_column(
+        ForeignKey("competitions.id"), nullable=False
+    )
+    competition: Mapped["Competition"] = relationship(
+        "Competition",
+        back_populates="groups",
+    )
+
+    teams: Mapped[list["Team"]] = relationship(
+        "Team",
+        back_populates="group",
+    )
+
+    matches: Mapped[list["Match"]] = relationship(
+        "Match",
+        back_populates="group",
     )

@@ -18,7 +18,7 @@
     "@mantine/hooks": "^7.17.5",
     "@reduxjs/toolkit": "^2.7.0",
     "@tabler/icons-react": "3.18.0",
-    "fastapi-rtk": "^0.1.13",
+    "fastapi-rtk": "^0.1.22",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-redux": "^9.2.0",
@@ -37,6 +37,7 @@
     "postcss": "^8.5.3",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
+    "prettier": "3.5.3",
     "vite": "^6.3.4"
   }
 }

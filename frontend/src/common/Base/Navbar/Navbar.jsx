@@ -9,15 +9,13 @@ import { useLocation } from 'react-router-dom';
 import Logo from '../Logo';
 import NavItem from './NavItem';
 import classes from './navbar.module.css';
-import { isAction } from '@reduxjs/toolkit';
 
 export default function Navbar({ open, toggle }) {
   const location = useLocation();
   const { navbarWidth } = useSize();
   const [activeLink, setActiveLink] = React.useState(location.pathname);
   const { height, ref } = useElementSize();
-  const isAdminRoute = location.pathname.startsWith('/admin'); 
-
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   const goldenRatio = useMemo(() => `calc(calc(100% - ${rem(height)}) * 0.382)`, [height]);
 
@@ -26,7 +24,7 @@ export default function Navbar({ open, toggle }) {
   }, [location]);
 
   const routeFilter = useMemo(() => {
-    return Object.values(routes).filter(route => {
+    return Object.values(routes).filter((route) => {
       if (isAdminRoute) {
         return route.path.startsWith('/admin');
       } else {
@@ -76,15 +74,13 @@ export default function Navbar({ open, toggle }) {
           </Box>
         </Group>
 
-
         {isAdminRoute ? (
           <Box h={USER_MENU_HEIGHT} bottom={0} w="100%" p="xs" bg="main">
             <UserMenu open={open} />
           </Box>
         ) : (
-          <Box h={USER_MENU_HEIGHT} bottom={0} w="100%" p="xs">
-          </Box>
-        )}        
+          <Box h={USER_MENU_HEIGHT} bottom={0} w="100%" p="xs"></Box>
+        )}
       </Stack>
     </>
   );

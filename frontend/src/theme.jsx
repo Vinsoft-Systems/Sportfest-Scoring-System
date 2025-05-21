@@ -7,9 +7,9 @@ const theme = createTheme({
     main: [
       ' #e6edf5', // 0
       ' #ccd9e8',
-      ' #9ab3d1',// 2
+      ' #9ab3d1', // 2
       ' #658dbb',
-      ' #3f71a8',// 4
+      ' #3f71a8', // 4
       ' #25599a',
       ' #003366', // 6 Navy blue (secondary color)
       ' #002c57',

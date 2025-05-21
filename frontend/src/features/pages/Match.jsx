@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ApiProvider, useApi } from 'fastapi-rtk';
 import { Center, Loader, Text, Container } from '@mantine/core';
@@ -20,16 +20,16 @@ function MatchContent() {
           console.log('Match data:', data);
           if (data && data.result) {
             setMatch(data.result);
-            
+
             if (data.result.team_a && Object.keys(data.result.team_a).length > 1) {
-              console.log("Using existing team A data:", data.result.team_a);
+              console.log('Using existing team A data:', data.result.team_a);
               setTeamADetails(data.result.team_a);
             } else if (data.result.team_a_id) {
               fetchTeamDetails(data.result.team_a_id, 'A');
             }
-            
+
             if (data.result.team_b && Object.keys(data.result.team_b).length > 1) {
-              console.log("Using existing team B data:", data.result.team_b);
+              console.log('Using existing team B data:', data.result.team_b);
               setTeamBDetails(data.result.team_b);
             } else if (data.result.team_b_id) {
               fetchTeamDetails(data.result.team_b_id, 'B');
@@ -48,16 +48,16 @@ function MatchContent() {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/team/${teamId}`);
       if (!response.ok) throw new Error(`Failed to fetch team ${teamType} details`);
-      
+
       const data = await response.json();
       console.log(`Team ${teamType} fetched data:`, data);
-      
+
       if (teamType === 'A') {
         setTeamADetails(data.result);
-        console.log("Set TeamA details:", data.result);
+        console.log('Set TeamA details:', data.result);
       } else {
         setTeamBDetails(data.result);
-        console.log("Set TeamB details:", data.result);
+        console.log('Set TeamB details:', data.result);
       }
     } catch (err) {
       console.error(`Error fetching team ${teamType}:`, err);
@@ -69,12 +69,11 @@ function MatchContent() {
   // Function to determine if the sport uses best-of-3 format
   const isBestOfThreeFormat = () => {
     if (!match || !match.sport_branch) return false;
-    
+
     const sportBranch = match.sport_branch.toLowerCase();
-    
+
     // Check if sport branch is Badminton or Volleyball
-    return sportBranch.includes('badminton') || 
-           sportBranch.includes('volleyball');
+    return sportBranch.includes('badminton') || sportBranch.includes('volleyball');
   };
 
   if (loading || isLoadingTeams) {
@@ -103,8 +102,8 @@ function MatchContent() {
 
   return (
     <Container size="md" py="xl">
-      <MatchDetailsCard 
-        match={match} 
+      <MatchDetailsCard
+        match={match}
         teamADetails={teamADetails}
         teamBDetails={teamBDetails}
         withBO3={isBestOfThreeFormat()}

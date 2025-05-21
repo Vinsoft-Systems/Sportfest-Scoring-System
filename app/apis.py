@@ -8,7 +8,7 @@ from fastapi_rtk import (
     protect,
 )
 
-from app.models import Competition, Match, Team
+from app.models import Competition, Match, Team, Group
 from app.main import toolkit
 
 
@@ -33,12 +33,13 @@ class CompetitionAPI(ModelRestApi):
 
 class TeamAPI(ModelRestApi):
     datamodel = SQLAInterface(Team)
-    add_columns = ["competition", "sport_branch", "name", "description", "players"]
+    add_columns = ["competition", "sport_branch", "name", "description", "players", "group"]
     list_columns = [
         "competition",
         "sport_branch",
         "name",
         "players",
+        "group"
     ]
     edit_columns = [
         "competition",
@@ -47,6 +48,7 @@ class TeamAPI(ModelRestApi):
         "description",
         "players",
         "profile_picture",
+        "group"
     ]
 
     @expose("/teams_by_competition/{comp_id}/{sport_branch}", methods=["GET"])
@@ -86,6 +88,7 @@ class MatchAPI(ModelRestApi):
         "status",
         "score_list",
         "date",
+        "group",
     ]
     list_columns = [
         "date",
@@ -97,9 +100,35 @@ class MatchAPI(ModelRestApi):
         "team_a",
         "team_b",
         "score_list",
+        "group",
+    ]
+    edit_columns = [
+        "competition",
+        "sport_branch",
+        "team_a",
+        "team_b",
+        "name",
+        "description",
+        "status",
+        "score_list",
+        "date",
+        "group",
     ]
 
+class GroupAPI(ModelRestApi):
+    datamodel = SQLAInterface(Group)
+    add_columns = [
+        "competition",
+        "sport_branch",
+        "name",
+    ]
+    list_columns = [
+        "competition",
+        "sport_branch",
+        "name",
+    ]
 
 toolkit.add_api(CompetitionAPI)
 toolkit.add_api(TeamAPI)
 toolkit.add_api(MatchAPI)
+toolkit.add_api(GroupAPI)
