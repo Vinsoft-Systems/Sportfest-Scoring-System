@@ -10,6 +10,7 @@ import Matches from '@/features/pages/Matches.jsx'
 import Match from '@/features/pages/Match.jsx';
 import Results from './common/components/ResultsCard';
 import { IconScoreboard } from '@tabler/icons-react';
+import AdminGroups from "@/features/pages/admin/AdminGroups.jsx";
 
 export const BASE_PATH = new URL(document.baseURI).pathname;
 
@@ -75,6 +76,13 @@ export const routes = {
     resource_name: 'match',
     name: 'Matches',
     Element: AdminMatches
+  },
+  adminGroups: {
+    path: '/admin/groups',
+    Icon: IconPuzzleFilled,
+    resource_name: 'group',
+    name: 'Groups',
+    Element: AdminGroups
   }
 };
 
