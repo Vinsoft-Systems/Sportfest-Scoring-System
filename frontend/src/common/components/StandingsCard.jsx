@@ -13,13 +13,11 @@ const COLUMNS = {
   Futsal: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Loss', 'GA', 'GF', 'GD', 'Points'],
   Volleyball: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Loss', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
   Basketball: ['Rank', 'Team', 'Matches Played', 'Win', 'Loss', 'PF', 'PA', 'PD', 'Points'],
-  'Badminton Ganda Putra': ['Rank', 'Team', 'Player'],
-  'Badminton Ganda Campuran': ['Rank', 'Team', 'Players'],
+  'Badminton Ganda Putra': ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Loss', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
+  'Badminton Ganda Campuran': ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Loss', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
 };
 
 function calculateStats(teams, matches, activeSport) {
-  if (!['Futsal', 'Volleyball', 'Basketball'].includes(activeSport)) return {};
-
   const stats = {};
   teams.forEach(team => {
     stats[Number(team.value)] = {
@@ -50,7 +48,11 @@ function calculateStats(teams, matches, activeSport) {
       const teamAId = Number(team_a.id);
       const teamBId = Number(team_b.id);
 
-      if (activeSport === 'Volleyball') {
+      if (
+        activeSport === 'Volleyball' ||
+        activeSport === 'Badminton Ganda Putra' ||
+        activeSport === 'Badminton Ganda Campuran'
+      ) {
         let setWinA = 0;
         let setWinB = 0;
         let pfA = 0, pfB = 0;
@@ -86,16 +88,26 @@ function calculateStats(teams, matches, activeSport) {
           stats[teamBId].pd = stats[teamBId].pf - stats[teamBId].pa;
         }
 
+        // Volleyball: win = 3 pts, draw = 1 pt, loss = 0 pts
+        // Badminton: win = 1 pt, draw = 1 pt, loss = 0 pts
+        let winPoints = 3;
+        if (
+          activeSport === 'Badminton Ganda Putra' ||
+          activeSport === 'Badminton Ganda Campuran'
+        ) {
+          winPoints = 1;
+        }
+
         if (setWinA > setWinB) {
           if (stats[teamAId]) {
             stats[teamAId].win += 1;
-            stats[teamAId].points += 3;
+            stats[teamAId].points += winPoints;
           }
           if (stats[teamBId]) stats[teamBId].loss += 1;
         } else if (setWinA < setWinB) {
           if (stats[teamBId]) {
             stats[teamBId].win += 1;
-            stats[teamBId].points += 3;
+            stats[teamBId].points += winPoints;
           }
           if (stats[teamAId]) stats[teamAId].loss += 1;
         } else {
@@ -121,11 +133,17 @@ function calculateStats(teams, matches, activeSport) {
           stats[teamAId].gf += scoreA;
           stats[teamAId].ga += scoreB;
           stats[teamAId].gd = stats[teamAId].gf - stats[teamAId].ga;
+          stats[teamAId].pf += scoreA;
+          stats[teamAId].pa += scoreB;
+          stats[teamAId].pd = stats[teamAId].pf - stats[teamAId].pa;
         }
         if (stats[teamBId]) {
           stats[teamBId].gf += scoreB;
           stats[teamBId].ga += scoreA;
           stats[teamBId].gd = stats[teamBId].gf - stats[teamBId].ga;
+          stats[teamBId].pf += scoreB;
+          stats[teamBId].pa += scoreA;
+          stats[teamBId].pd = stats[teamBId].pf - stats[teamBId].pa;
         }
 
         if (scoreA > scoreB) {
@@ -141,8 +159,7 @@ function calculateStats(teams, matches, activeSport) {
           }
           if (stats[teamAId]) stats[teamAId].loss += 1;
         }
-      } else {
-        // Futsal and others
+      } else if (activeSport === 'Futsal') {
         const [scoreA, scoreB] = score_list[score_list.length - 1]
           .split(/[-:]/)
           .map(Number);
@@ -415,14 +432,26 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
                               <td style={styles.td}>{teamStats.played || 0}</td>
                               <td style={styles.td}>{teamStats.win || 0}</td>
                               <td style={styles.td}>{teamStats.loss || 0}</td>
-                              <td style={styles.td}>{teamStats.gf || 0}</td>
-                              <td style={styles.td}>{teamStats.ga || 0}</td>
-                              <td style={styles.td}>{teamStats.gd || 0}</td>
+                              <td style={styles.td}>{teamStats.pf || 0}</td>
+                              <td style={styles.td}>{teamStats.pa || 0}</td>
+                              <td style={styles.td}>{teamStats.pd || 0}</td>
                               <td style={styles.td}>{teamStats.points || 0}</td>
                             </>
                           )}
                           {(activeSport === 'Badminton Ganda Putra' || activeSport === 'Badminton Ganda Campuran') && (
-                            <td style={styles.td}>{Array.isArray(team.players) ? team.players.join(', ') : ''}</td>
+                            <>
+                              <td style={styles.td}>{teamStats.played || 0}</td>
+                              <td style={styles.td}>{teamStats.win || 0}</td>
+                              <td style={styles.td}>{teamStats.draw || 0}</td>
+                              <td style={styles.td}>{teamStats.loss || 0}</td>
+                              <td style={styles.td}>{teamStats.sw || 0}</td>
+                              <td style={styles.td}>{teamStats.sl || 0}</td>
+                              <td style={styles.td}>{teamStats.sd || 0}</td>
+                              <td style={styles.td}>{teamStats.pf || 0}</td>
+                              <td style={styles.td}>{teamStats.pa || 0}</td>
+                              <td style={styles.td}>{teamStats.pd || 0}</td>
+                              <td style={styles.td}>{teamStats.points || 0}</td>
+                            </>
                           )}
                         </tr>
                       );
