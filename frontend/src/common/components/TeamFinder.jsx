@@ -1,7 +1,6 @@
 import { Select } from '@mantine/core';
 import { ApiProvider, useApi, useForms } from 'fastapi-rtk';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 function TeamAutocomplete({ componentProps, compId, sport_branch }) {
   console.log('TeamAutocomplete', componentProps, compId, sport_branch);
@@ -11,7 +10,11 @@ function TeamAutocomplete({ componentProps, compId, sport_branch }) {
   useEffect(() => {
     if (compId && sport_branch) {
       getEntry(`teams_by_competition/${compId}/${sport_branch}`).then((response) => {
-        setData(response || []);
+        // Only keep label and value for Select
+        const safeData = Array.isArray(response)
+          ? response.map(({ label, value }) => ({ label, value }))
+          : [];
+        setData(safeData);
       });
     }
   }, [compId, sport_branch, getEntry]);

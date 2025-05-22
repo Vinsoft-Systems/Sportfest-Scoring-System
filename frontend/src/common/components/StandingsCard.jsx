@@ -10,9 +10,9 @@ const GROUP_LABELS = {
 };
 
 const COLUMNS = {
-  Futsal: ['Rank', 'Team', 'Match Played', 'Win', 'Draw', 'Loss', 'GA', 'GF', 'GD', 'Points'],
-  Volleyball: ['Rank', 'Team', 'Players'],
-  Basketball: ['Rank', 'Team', 'Match Played', 'Win', 'Loss', 'Points'],
+  Futsal: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Loss', 'GA', 'GF', 'GD', 'Points'],
+  Volleyball: ['Rank', 'Team', 'Matches Played', 'Win', 'Loss', 'SW','SL','SD', 'Points'],
+  Basketball: ['Rank', 'Team', 'Matches Played', 'Win', 'Loss', 'PF', 'PA', 'PD', 'Points' ],
   'Badminton Ganda Putra': ['Rank', 'Team', 'Players'],
   'Badminton Ganda Campuran': ['Rank', 'Team', 'Players'],
 };
@@ -27,7 +27,6 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
     fetch(`/api/v1/team/teams_by_competition/1/${activeSport}`)
       .then(res => res.json())
       .then(data => {
-        // If your API returns { result: [...] }
         setTeams(data.result || data || []);
         setLoading(false);
       })
@@ -38,6 +37,7 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
   const groupedTeams = useMemo(() => {
     const groups = {};
     teams.forEach((team) => {
+      // group is now a string (e.g. "A"), not an object
       const groupName = team.group || 'No Group';
       if (!groups[groupName]) groups[groupName] = [];
       groups[groupName].push(team);
@@ -141,7 +141,7 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
     <div style={styles.container}>
       <h1 style={styles.header}>Sports Competition Standings</h1>
       <div style={styles.sportSelector}>
-        {Object.keys(GROUP_LABELS).map((sport) => (
+        {sportBranches.map((sport) => (
           <button
             key={sport}
             style={activeSport === sport ? styles.activeButton : styles.button}
@@ -174,35 +174,24 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
                 <tbody>
                   {teams.map((team, index) => {
                     const isEven = index % 2 === 0;
-                    const isHovered = false; // You can keep your hover logic if you want
                     return (
                       <tr
-                        key={team.id || team.label}
+                        key={team.value || team.label}
                         style={{
                           ...styles.td,
                           ...(isEven ? styles.evenRow : {}),
-                          ...(isHovered ? styles.hoverRow : {}),
                           transition: 'background-color 0.2s ease',
                         }}
+                        onMouseEnter={() => setHoveredRow(team.value || team.label)}
+                        onMouseLeave={() => setHoveredRow(null)}
                       >
                         <td style={styles.td}>{index + 1}</td>
                         <td style={styles.td}>{team.label}</td>
-                        {activeSport === 'Futsal' ? (
-                          <>
-                            <td style={styles.td}>0</td>
-                            <td style={styles.td}>0</td>
-                            <td style={styles.td}>0</td>
-                            <td style={styles.td}>0</td>
-                            <td style={styles.td}>0</td>
-                            <td style={styles.td}>0</td>
-                            <td style={styles.td}>0</td>
-                            <td style={styles.td}>0</td>
-                          </>
-                        ) : (
-                          <td style={styles.td}>
-                            {Array.isArray(team.players) ? team.players.join(', ') : ''}
-                          </td>
-                        )}
+                        {COLUMNS[activeSport]
+                          .slice(2) // Skip "Rank" and "Team"
+                          .map((col, i) => (
+                            <td key={i} style={styles.td}>0</td>
+                          ))}
                       </tr>
                     );
                   })}
