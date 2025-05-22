@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useApi, ApiProvider } from 'fastapi-rtk';
 import './StandingsTable.css';
 import calculateStats from './CalculateStats.jsx';
+import StandingsTableRow from './StandingsTableRow.jsx';
 
 const GROUP_LABELS = {
   Futsal: ['A', 'B', 'C'],
@@ -125,68 +126,15 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
                         hoveredRow === (team.id || team.value || team.label) ? "hoverRow" : ""
                       ].join(" ").trim();
                       return (
-                        <tr
-                          key={team.id || team.value || team.label}
-                          className={rowClass}
-                          onMouseEnter={() => setHoveredRow(team.id || team.value || team.label)}
-                          onMouseLeave={() => setHoveredRow(null)}
-                        >
-                          <td className="td">{index + 1}</td>
-                          <td className="td">{team.label}</td>
-                          {activeSport === 'Futsal' && (
-                            <>
-                              <td className="td">{teamStats.played || 0}</td>
-                              <td className="td">{teamStats.win || 0}</td>
-                              <td className="td">{teamStats.draw || 0}</td>
-                              <td className="td">{teamStats.loss || 0}</td>
-                              <td className="td">{teamStats.ga || 0}</td>
-                              <td className="td">{teamStats.gf || 0}</td>
-                              <td className="td">{teamStats.gd || 0}</td>
-                              <td className="td">{teamStats.points || 0}</td>
-                            </>
-                          )}
-                          {activeSport === 'Volleyball' && (
-                            <>
-                              <td className="td">{teamStats.played || 0}</td>
-                              <td className="td">{teamStats.win || 0}</td>
-                              <td className="td">{teamStats.draw || 0}</td>
-                              <td className="td">{teamStats.loss || 0}</td>
-                              <td className="td">{teamStats.sw || 0}</td>
-                              <td className="td">{teamStats.sl || 0}</td>
-                              <td className="td">{teamStats.sd || 0}</td>
-                              <td className="td">{teamStats.pf || 0}</td>
-                              <td className="td">{teamStats.pa || 0}</td>
-                              <td className="td">{teamStats.pd || 0}</td>
-                              <td className="td">{teamStats.points || 0}</td>
-                            </>
-                          )}
-                          {activeSport === 'Basketball' && (
-                            <>
-                              <td className="td">{teamStats.played || 0}</td>
-                              <td className="td">{teamStats.win || 0}</td>
-                              <td className="td">{teamStats.loss || 0}</td>
-                              <td className="td">{teamStats.pf || 0}</td>
-                              <td className="td">{teamStats.pa || 0}</td>
-                              <td className="td">{teamStats.pd || 0}</td>
-                              <td className="td">{teamStats.points || 0}</td>
-                            </>
-                          )}
-                          {(activeSport === 'Badminton Ganda Putra' || activeSport === 'Badminton Ganda Campuran') && (
-                            <>
-                              <td className="td">{teamStats.played || 0}</td>
-                              <td className="td">{teamStats.win || 0}</td>
-                              <td className="td">{teamStats.draw || 0}</td>
-                              <td className="td">{teamStats.loss || 0}</td>
-                              <td className="td">{teamStats.sw || 0}</td>
-                              <td className="td">{teamStats.sl || 0}</td>
-                              <td className="td">{teamStats.sd || 0}</td>
-                              <td className="td">{teamStats.pf || 0}</td>
-                              <td className="td">{teamStats.pa || 0}</td>
-                              <td className="td">{teamStats.pd || 0}</td>
-                              <td className="td">{teamStats.points || 0}</td>
-                            </>
-                          )}
-                        </tr>
+                        <StandingsTableRow
+                          team={team}
+                          teamStats={teamStats}
+                          index={index}
+                          rowClass={rowClass}
+                          hoveredRow={hoveredRow}
+                          setHoveredRow={setHoveredRow}
+                          activeSport={activeSport}
+                        />
                       );
                     })}
                 </tbody>
