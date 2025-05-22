@@ -4,20 +4,12 @@ import './StandingsTable.css';
 import calculateStats from './CalculateStats.jsx';
 import StandingsTableRow from './StandingsTableRow.jsx';
 
-const GROUP_LABELS = {
-  Futsal: ['A', 'B', 'C'],
-  Volleyball: ['A', 'B'],
-  Basketball: ['A', 'B'],
-  'Badminton Ganda Putra': ['A', 'B', 'C'],
-  'Badminton Ganda Campuran': ['A', 'B'],
-};
-
 const COLUMNS = {
-  Futsal: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Loss', 'GA', 'GF', 'GD', 'Points'],
-  Volleyball: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Loss', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
-  Basketball: ['Rank', 'Team', 'Matches Played', 'Win', 'Loss', 'PF', 'PA', 'PD', 'Points'],
-  'Badminton Ganda Putra': ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Loss', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
-  'Badminton Ganda Campuran': ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Loss', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
+  Futsal: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'GA', 'GF', 'GD', 'Points'],
+  Volleyball: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
+  Basketball: ['Rank', 'Team', 'Matches Played', 'Win', 'Lose', 'PF', 'PA', 'PD', 'Points'],
+  'Badminton Ganda Putra': ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
+  'Badminton Ganda Campuran': ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
 };
 
 function StandingsCard({ sportBranch = 'Futsal' }) {
@@ -55,19 +47,11 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
       if (!groups[groupName]) groups[groupName] = [];
       groups[groupName].push(team);
     });
-
-    const orderedGroups = {};
-    (GROUP_LABELS[activeSport] || Object.keys(groups)).forEach((label) => {
-      if (groups[label]) orderedGroups[`Group ${label}`] = groups[label];
-    });
-    Object.keys(groups).forEach((label) => {
-      if (!orderedGroups[`Group ${label}`]) orderedGroups[`Group ${label}`] = groups[label];
-    });
-    return orderedGroups;
-  }, [teams, activeSport]);
+    return groups;
+  }, [teams]);
 
   const stats = useMemo(() => calculateStats(teams, matches, activeSport), [teams, matches, activeSport]);
-  const sportBranches = Object.keys(GROUP_LABELS);
+  const sportBranches = Object.keys(COLUMNS);
   const [hoveredRow, setHoveredRow] = useState(null);
 
   return (
@@ -93,7 +77,7 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
         ) : (
           Object.entries(groupedTeams).map(([groupName, teams]) => (
             <div key={groupName} className="groupContainer">
-              <h3 className="groupHeader">{groupName}</h3>
+              <h3 className="groupHeader">Group {groupName}</h3>
               <table className="table">
                 <thead>
                   <tr>
