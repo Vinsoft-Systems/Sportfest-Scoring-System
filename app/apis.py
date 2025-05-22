@@ -69,11 +69,12 @@ class TeamAPI(ModelRestApi):
                     "list_columns": [
                         "id",
                         "name",
+                        "group",
                     ],
                 },
             )
 
-            return [{"label": team.name, "value": str(team.id)} for team in teams]
+            return [{"label": team.name, "value": str(team.id), "group": getattr(team.group, "name", None) if team.group else None,} for team in teams]
 
 
 class MatchAPI(ModelRestApi):
