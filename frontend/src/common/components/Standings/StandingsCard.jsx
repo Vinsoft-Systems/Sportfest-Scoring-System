@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useApi, ApiProvider } from 'fastapi-rtk';
+import styles from './StandingsTable.css';
 
 const GROUP_LABELS = {
   Futsal: ['A', 'B', 'C'],
@@ -253,104 +254,24 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
   }, [teams, activeSport]);
 
   const stats = useMemo(() => calculateStats(teams, matches, activeSport), [teams, matches, activeSport]);
-
-  const styles = {
-    container: {
-      maxWidth: '900px',
-      margin: '0 auto',
-      padding: '20px',
-      fontFamily: 'Arial, sans-serif',
-    },
-    header: {
-      textAlign: 'center',
-      color: '#333',
-      marginBottom: '30px',
-    },
-    sportSelector: {
-      display: 'flex',
-      justifyContent: 'center',
-      marginBottom: '30px',
-      gap: '15px',
-    },
-    button: {
-      padding: '10px 20px',
-      border: 'none',
-      borderRadius: '5px',
-      backgroundColor: '#f0f0f0',
-      color: '#333',
-      fontSize: '16px',
-      cursor: 'pointer',
-      transition: 'all 0.3s ease',
-    },
-    activeButton: {
-      padding: '10px 20px',
-      border: 'none',
-      borderRadius: '5px',
-      backgroundColor: '#2c3e50',
-      color: 'white',
-      fontSize: '16px',
-      cursor: 'pointer',
-      transition: 'all 0.3s ease',
-    },
-    standingsContainer: {
-      backgroundColor: 'white',
-      borderRadius: '8px',
-      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-      padding: '20px',
-    },
-    groupContainer: {
-      marginBottom: '40px',
-    },
-    groupHeader: {
-      backgroundColor: '#2c3e50',
-      color: 'white',
-      padding: '10px 15px',
-      borderRadius: '5px 5px 0 0',
-      marginBottom: '0',
-    },
-    table: {
-      width: '100%',
-      borderCollapse: 'collapse',
-      marginBottom: '30px',
-    },
-    th: {
-      padding: '12px 15px',
-      textAlign: 'center',
-      border: '1px solid #ddd',
-      backgroundColor: '#f8f9fa',
-      fontWeight: 'bold',
-    },
-    td: {
-      padding: '12px 15px',
-      textAlign: 'center',
-      border: '1px solid #ddd',
-    },
-    evenRow: {
-      backgroundColor: '#f2f2f2',
-    },
-    hoverRow: {
-      backgroundColor: '#e9ecef',
-    },
-  };
-
   const sportBranches = Object.keys(GROUP_LABELS);
   const [hoveredRow, setHoveredRow] = useState(null);
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.header}>Sports Competition Standings</h1>
-      <div style={styles.sportSelector}>
+    <div className={styles.container}>
+      <h1 className={styles.header}>Sports Competition Standings</h1>
+      <div className={styles.sportSelector}>
         {sportBranches.map((sport) => (
           <button
             key={sport}
-            style={activeSport === sport ? styles.activeButton : styles.button}
+            className={activeSport === sport ? styles.activeButton : styles.button}
             onClick={() => setActiveSport(sport)}
           >
             {sport}
           </button>
         ))}
       </div>
-      <div style={styles.standingsContainer}>
+      <div className={styles.standingsContainer}>
         <h2 style={{ textAlign: 'center', color: '#2c3e50', marginBottom: '20px' }}>
           {activeSport} Standings
         </h2>
@@ -358,13 +279,13 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
           <div style={{ textAlign: 'center', padding: 40 }}>Loading...</div>
         ) : (
           Object.entries(groupedTeams).map(([groupName, teams]) => (
-            <div key={groupName} style={styles.groupContainer}>
-              <h3 style={styles.groupHeader}>{groupName}</h3>
-              <table style={styles.table}>
+            <div key={groupName} className={styles.groupContainer}>
+              <h3 className={styles.groupHeader}>{groupName}</h3>
+              <table className={styles.table}>
                 <thead>
                   <tr>
                     {COLUMNS[activeSport].map((column, index) => (
-                      <th key={index} style={styles.th}>
+                      <th key={index} className={styles.th}>
                         {column}
                       </th>
                     ))}
@@ -390,67 +311,63 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
                       return (
                         <tr
                           key={team.id || team.value || team.label}
-                          style={{
-                            ...styles.td,
-                            ...(isEven ? styles.evenRow : {}),
-                            transition: 'background-color 0.2s ease',
-                          }}
+                          className={`${styles.td} ${isEven ? styles.evenRow : ''} ${hoveredRow === (team.id || team.value || team.label) ? styles.hoverRow : ''}`}
                           onMouseEnter={() => setHoveredRow(team.id || team.value || team.label)}
                           onMouseLeave={() => setHoveredRow(null)}
                         >
-                          <td style={styles.td}>{index + 1}</td>
-                          <td style={styles.td}>{team.label}</td>
+                          <td className={styles.td}>{index + 1}</td>
+                          <td className={styles.td}>{team.label}</td>
                           {activeSport === 'Futsal' && (
                             <>
-                              <td style={styles.td}>{teamStats.played || 0}</td>
-                              <td style={styles.td}>{teamStats.win || 0}</td>
-                              <td style={styles.td}>{teamStats.draw || 0}</td>
-                              <td style={styles.td}>{teamStats.loss || 0}</td>
-                              <td style={styles.td}>{teamStats.ga || 0}</td>
-                              <td style={styles.td}>{teamStats.gf || 0}</td>
-                              <td style={styles.td}>{teamStats.gd || 0}</td>
-                              <td style={styles.td}>{teamStats.points || 0}</td>
+                              <td className={styles.td}>{teamStats.played || 0}</td>
+                              <td className={styles.td}>{teamStats.win || 0}</td>
+                              <td className={styles.td}>{teamStats.draw || 0}</td>
+                              <td className={styles.td}>{teamStats.loss || 0}</td>
+                              <td className={styles.td}>{teamStats.ga || 0}</td>
+                              <td className={styles.td}>{teamStats.gf || 0}</td>
+                              <td className={styles.td}>{teamStats.gd || 0}</td>
+                              <td className={styles.td}>{teamStats.points || 0}</td>
                             </>
                           )}
                           {activeSport === 'Volleyball' && (
                             <>
-                              <td style={styles.td}>{teamStats.played || 0}</td>
-                              <td style={styles.td}>{teamStats.win || 0}</td>
-                              <td style={styles.td}>{teamStats.draw || 0}</td>
-                              <td style={styles.td}>{teamStats.loss || 0}</td>
-                              <td style={styles.td}>{teamStats.sw || 0}</td>
-                              <td style={styles.td}>{teamStats.sl || 0}</td>
-                              <td style={styles.td}>{teamStats.sd || 0}</td>
-                              <td style={styles.td}>{teamStats.pf || 0}</td>
-                              <td style={styles.td}>{teamStats.pa || 0}</td>
-                              <td style={styles.td}>{teamStats.pd || 0}</td>
-                              <td style={styles.td}>{teamStats.points || 0}</td>
+                              <td className={styles.td}>{teamStats.played || 0}</td>
+                              <td className={styles.td}>{teamStats.win || 0}</td>
+                              <td className={styles.td}>{teamStats.draw || 0}</td>
+                              <td className={styles.td}>{teamStats.loss || 0}</td>
+                              <td className={styles.td}>{teamStats.sw || 0}</td>
+                              <td className={styles.td}>{teamStats.sl || 0}</td>
+                              <td className={styles.td}>{teamStats.sd || 0}</td>
+                              <td className={styles.td}>{teamStats.pf || 0}</td>
+                              <td className={styles.td}>{teamStats.pa || 0}</td>
+                              <td className={styles.td}>{teamStats.pd || 0}</td>
+                              <td className={styles.td}>{teamStats.points || 0}</td>
                             </>
                           )}
                           {activeSport === 'Basketball' && (
                             <>
-                              <td style={styles.td}>{teamStats.played || 0}</td>
-                              <td style={styles.td}>{teamStats.win || 0}</td>
-                              <td style={styles.td}>{teamStats.loss || 0}</td>
-                              <td style={styles.td}>{teamStats.pf || 0}</td>
-                              <td style={styles.td}>{teamStats.pa || 0}</td>
-                              <td style={styles.td}>{teamStats.pd || 0}</td>
-                              <td style={styles.td}>{teamStats.points || 0}</td>
+                              <td className={styles.td}>{teamStats.played || 0}</td>
+                              <td className={styles.td}>{teamStats.win || 0}</td>
+                              <td className={styles.td}>{teamStats.loss || 0}</td>
+                              <td className={styles.td}>{teamStats.pf || 0}</td>
+                              <td className={styles.td}>{teamStats.pa || 0}</td>
+                              <td className={styles.td}>{teamStats.pd || 0}</td>
+                              <td className={styles.td}>{teamStats.points || 0}</td>
                             </>
                           )}
                           {(activeSport === 'Badminton Ganda Putra' || activeSport === 'Badminton Ganda Campuran') && (
                             <>
-                              <td style={styles.td}>{teamStats.played || 0}</td>
-                              <td style={styles.td}>{teamStats.win || 0}</td>
-                              <td style={styles.td}>{teamStats.draw || 0}</td>
-                              <td style={styles.td}>{teamStats.loss || 0}</td>
-                              <td style={styles.td}>{teamStats.sw || 0}</td>
-                              <td style={styles.td}>{teamStats.sl || 0}</td>
-                              <td style={styles.td}>{teamStats.sd || 0}</td>
-                              <td style={styles.td}>{teamStats.pf || 0}</td>
-                              <td style={styles.td}>{teamStats.pa || 0}</td>
-                              <td style={styles.td}>{teamStats.pd || 0}</td>
-                              <td style={styles.td}>{teamStats.points || 0}</td>
+                              <td className={styles.td}>{teamStats.played || 0}</td>
+                              <td className={styles.td}>{teamStats.win || 0}</td>
+                              <td className={styles.td}>{teamStats.draw || 0}</td>
+                              <td className={styles.td}>{teamStats.loss || 0}</td>
+                              <td className={styles.td}>{teamStats.sw || 0}</td>
+                              <td className={styles.td}>{teamStats.sl || 0}</td>
+                              <td className={styles.td}>{teamStats.sd || 0}</td>
+                              <td className={styles.td}>{teamStats.pf || 0}</td>
+                              <td className={styles.td}>{teamStats.pa || 0}</td>
+                              <td className={styles.td}>{teamStats.pd || 0}</td>
+                              <td className={styles.td}>{teamStats.points || 0}</td>
                             </>
                           )}
                         </tr>

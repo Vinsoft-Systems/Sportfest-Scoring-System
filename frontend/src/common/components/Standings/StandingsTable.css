@@ -1,0 +1,88 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.sportSelector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.activeButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #2c3e50;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.standingsContainer {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.groupContainer {
+  margin-bottom: 40px;
+}
+
+.groupHeader {
+  background-color: #2c3e50;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px 5px 0 0;
+  margin-bottom: 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.th {
+  padding: 12px 15px;
+  text-align: center;
+  border: 1px solid #ddd;
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.td {
+  padding: 12px 15px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.evenRow {
+  background-color: #f2f2f2;
+}
+
+.hoverRow {
+  background-color: #e9ecef;
+}
