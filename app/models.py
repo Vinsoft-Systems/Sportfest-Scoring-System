@@ -1,11 +1,12 @@
 from datetime import datetime
 import enum
-from fastapi_rtk import JSONFileColumns, Model
-from sqlalchemy import JSON, DateTime, ForeignKey, UniqueConstraint
+from fastapi_rtk import JSONBFileColumns, Model
+from sqlalchemy import DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy.dialects import postgresql
 
 
-class JSONTags(JSONFileColumns):
+class JSONTags(JSONBFileColumns):
     cache_ok = True
     pass
 
@@ -45,10 +46,19 @@ class Competition(Model, AuditMixin):
         back_populates="competition",
     )
 
-    groups: Mapped[list["Match"]] = relationship(
+    groups: Mapped[list["Group"]] = relationship(
         "Group",
         back_populates="competition",
     )
+
+    brackets: Mapped[list["Bracket"]] = relationship(
+        "Bracket",
+        back_populates="competition",
+    )
+
+    def __repr__(self):
+        return f"{self.name})"
+
 
 
 class Team(Model, AuditMixin):
@@ -59,7 +69,7 @@ class Team(Model, AuditMixin):
     description: Mapped[str]
     sport_branch: Mapped[str]  # Ambil dari Competition
 
-    players: Mapped[dict] = mapped_column(JSON)
+    players: Mapped[dict] = mapped_column(postgresql.JSONB)
     # profile_picture = Mapped[str]
 
     competition_id: Mapped[int] = mapped_column(
@@ -89,6 +99,9 @@ class Team(Model, AuditMixin):
         back_populates="teams",
     )
 
+    def __repr__(self):
+        return f"{self.name})"
+
 
 class StatusEnum(enum.Enum):
     SCHEDULED = "Scheduled"
@@ -108,7 +121,7 @@ class Match(Model, AuditMixin):
     status: Mapped[StatusEnum] = mapped_column(
         default=StatusEnum.SCHEDULED, nullable=False
     )
-    score_list: Mapped[dict] = mapped_column(JSON, nullable=True)
+    score_list: Mapped[dict] = mapped_column(postgresql.JSONB, nullable=True)
 
     competition_id: Mapped[int] = mapped_column(
         ForeignKey("competitions.id"), nullable=False
@@ -117,13 +130,13 @@ class Match(Model, AuditMixin):
         "Competition",
         back_populates="matches",
     )
-    team_a_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=False)
+    team_a_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=True)
     team_a: Mapped["Team"] = relationship(
         "Team",
         foreign_keys=[team_a_id],
         back_populates="matches_as_team_a",
     )
-    team_b_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=False)
+    team_b_id: Mapped[int] = mapped_column(ForeignKey("teams.id"), nullable=True)
     team_b: Mapped["Team"] = relationship(
         "Team",
         foreign_keys=[team_b_id],
@@ -138,6 +151,10 @@ class Match(Model, AuditMixin):
         back_populates="matches",
     )
 
+    def __repr__(self):
+        return f"{self.name})"
+
+
 class Group(Model, AuditMixin):
     __tablename__ = "groups"
 
@@ -149,7 +166,6 @@ class Group(Model, AuditMixin):
     __table_args__ = (
         UniqueConstraint("name", "sport_branch", name="uq_group_name_sport_branch"),
     )
-
 
     competition_id: Mapped[int] = mapped_column(
         ForeignKey("competitions.id"), nullable=False
@@ -168,3 +184,24 @@ class Group(Model, AuditMixin):
         "Match",
         back_populates="group",
     )
+
+    def __repr__(self):
+        return f"{self.sport_branch} - ({self.name})"
+
+class Bracket(Model, AuditMixin):
+    __tablename__ = "brackets"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    sport_branch: Mapped[str]
+    knockout_stage_config: Mapped[dict] = mapped_column(postgresql.JSONB, nullable=True)
+
+    competition_id: Mapped[int] = mapped_column(
+        ForeignKey("competitions.id"), nullable=False
+    )
+    competition: Mapped["Competition"] = relationship(
+        "Competition",
+        back_populates="brackets",
+    )
+
+    def __repr__(self):
+        return f"{self.id}"
