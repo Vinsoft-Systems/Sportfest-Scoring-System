@@ -22,6 +22,7 @@ function Wrapper() {
 }
 
 function App() {
+  console.log(window.fab_react_config);
   return (
     <Routes>
       <Route exact={true} path={loginPath} element={<LoginPage />} />

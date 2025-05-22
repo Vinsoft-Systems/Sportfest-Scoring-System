@@ -35,7 +35,7 @@ toolkit = FastAPIReactToolkit(
     on_startup=on_startup,
 )
 toolkit.config.from_pyfile("./app/config.py")
-toolkit.config.from_pyfile("./config.py", silent=True)
+# toolkit.config.from_pyfile("./config.py", silent=True)
 toolkit.initialize(app)
 
 from .apis import *  # noqa: E402, F403
