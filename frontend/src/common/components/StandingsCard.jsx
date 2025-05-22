@@ -17,8 +17,81 @@ const COLUMNS = {
   'Badminton Ganda Campuran': ['Rank', 'Team', 'Players'],
 };
 
+function calculateStats(teams, matches, activeSport) {
+  if (!['Futsal', 'Volleyball', 'Basketball'].includes(activeSport)) return {};
+
+  const stats = {};
+  teams.forEach(team => {
+    stats[Number(team.value)] = {
+      ...team,
+      played: 0,
+      win: 0,
+      draw: 0,
+      loss: 0,
+      gf: 0,
+      ga: 0,
+      gd: 0,
+      points: 0,
+    };
+  });
+
+  matches
+    .filter(match => match.status === 'In Progress' || match.status === 'Completed')
+    .forEach(match => {
+      const { team_a, team_b, score_list } = match;
+      if (!team_a || !team_b || !score_list || score_list.length === 0) return;
+
+      const [scoreA, scoreB] = score_list[score_list.length - 1]
+        .split('-')
+        .map(Number);
+
+      const teamAId = Number(team_a.id);
+      const teamBId = Number(team_b.id);
+
+      if (stats[teamAId]) stats[teamAId].played += 1;
+      if (stats[teamBId]) stats[teamBId].played += 1;
+
+      if (stats[teamAId]) {
+        stats[teamAId].gf += scoreA;
+        stats[teamAId].ga += scoreB;
+        stats[teamAId].gd = stats[teamAId].gf - stats[teamAId].ga;
+      }
+      if (stats[teamBId]) {
+        stats[teamBId].gf += scoreB;
+        stats[teamBId].ga += scoreA;
+        stats[teamBId].gd = stats[teamBId].gf - stats[teamBId].ga;
+      }
+
+      if (scoreA > scoreB) {
+        if (stats[teamAId]) {
+          stats[teamAId].win += 1;
+          stats[teamAId].points += 3;
+        }
+        if (stats[teamBId]) stats[teamBId].loss += 1;
+      } else if (scoreA < scoreB) {
+        if (stats[teamBId]) {
+          stats[teamBId].win += 1;
+          stats[teamBId].points += 3;
+        }
+        if (stats[teamAId]) stats[teamAId].loss += 1;
+      } else {
+        if (stats[teamAId]) {
+          stats[teamAId].draw += 1;
+          stats[teamAId].points += 1;
+        }
+        if (stats[teamBId]) {
+          stats[teamBId].draw += 1;
+          stats[teamBId].points += 1;
+        }
+      }
+    });
+
+  return stats;
+}
+
 function StandingsCard({ sportBranch = 'Futsal' }) {
   const [teams, setTeams] = useState([]);
+  const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeSport, setActiveSport] = useState(sportBranch);
 
@@ -33,27 +106,36 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
       .catch(() => setLoading(false));
   }, [activeSport]);
 
-  // Group teams by group name (A, B, C, etc.)
+  useEffect(() => {
+    const fetchMatches = () => {
+      fetch(`/api/v1/match/?competition_id=1&sport_branch=${encodeURIComponent(activeSport)}`)
+        .then(res => res.json())
+        .then(data => setMatches(data.result || data || []));
+    };
+    fetchMatches();
+    const interval = setInterval(fetchMatches, 5000);
+    return () => clearInterval(interval);
+  }, [activeSport]);
+
   const groupedTeams = useMemo(() => {
     const groups = {};
     teams.forEach((team) => {
-      // group is now a string (e.g. "A"), not an object
       const groupName = team.group || 'No Group';
       if (!groups[groupName]) groups[groupName] = [];
       groups[groupName].push(team);
     });
 
-    // Sort groups by GROUP_LABELS order if available
     const orderedGroups = {};
     (GROUP_LABELS[activeSport] || Object.keys(groups)).forEach((label) => {
       if (groups[label]) orderedGroups[`Group ${label}`] = groups[label];
     });
-    // Add any other groups not in GROUP_LABELS
     Object.keys(groups).forEach((label) => {
       if (!orderedGroups[`Group ${label}`]) orderedGroups[`Group ${label}`] = groups[label];
     });
     return orderedGroups;
   }, [teams, activeSport]);
+
+  const stats = useMemo(() => calculateStats(teams, matches, activeSport), [teams, matches, activeSport]);
 
   const styles = {
     container: {
@@ -172,29 +254,75 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {teams.map((team, index) => {
-                    const isEven = index % 2 === 0;
-                    return (
-                      <tr
-                        key={team.value || team.label}
-                        style={{
-                          ...styles.td,
-                          ...(isEven ? styles.evenRow : {}),
-                          transition: 'background-color 0.2s ease',
-                        }}
-                        onMouseEnter={() => setHoveredRow(team.value || team.label)}
-                        onMouseLeave={() => setHoveredRow(null)}
-                      >
-                        <td style={styles.td}>{index + 1}</td>
-                        <td style={styles.td}>{team.label}</td>
-                        {COLUMNS[activeSport]
-                          .slice(2) // Skip "Rank" and "Team"
-                          .map((col, i) => (
-                            <td key={i} style={styles.td}>0</td>
-                          ))}
-                      </tr>
-                    );
-                  })}
+                  {[...teams]
+                    .sort((a, b) => {
+                      const statsA = stats[Number(a.value)] || {};
+                      const statsB = stats[Number(b.value)] || {};
+                      // Sort by points DESC, then goals for DESC, then goal difference DESC
+                      if ((statsB.points || 0) !== (statsA.points || 0)) {
+                        return (statsB.points || 0) - (statsA.points || 0);
+                      }
+                      if ((statsB.gf || 0) !== (statsA.gf || 0)) {
+                        return (statsB.gf || 0) - (statsA.gf || 0);
+                      }
+                      return (statsB.gd || 0) - (statsA.gd || 0);
+                    })
+                    .map((team, index) => {
+                      const isEven = index % 2 === 0;
+                      const teamStats = stats[Number(team.value)] || {};
+                      return (
+                        <tr
+                          key={team.id || team.value || team.label}
+                          style={{
+                            ...styles.td,
+                            ...(isEven ? styles.evenRow : {}),
+                            transition: 'background-color 0.2s ease',
+                          }}
+                          onMouseEnter={() => setHoveredRow(team.id || team.value || team.label)}
+                          onMouseLeave={() => setHoveredRow(null)}
+                        >
+                          <td style={styles.td}>{index + 1}</td>
+                          <td style={styles.td}>{team.label}</td>
+                          {activeSport === 'Futsal' && (
+                            <>
+                              <td style={styles.td}>{teamStats.played || 0}</td>
+                              <td style={styles.td}>{teamStats.win || 0}</td>
+                              <td style={styles.td}>{teamStats.draw || 0}</td>
+                              <td style={styles.td}>{teamStats.loss || 0}</td>
+                              <td style={styles.td}>{teamStats.ga || 0}</td>
+                              <td style={styles.td}>{teamStats.gf || 0}</td>
+                              <td style={styles.td}>{teamStats.gd || 0}</td>
+                              <td style={styles.td}>{teamStats.points || 0}</td>
+                            </>
+                          )}
+                          {activeSport === 'Volleyball' && (
+                            <>
+                              <td style={styles.td}>{teamStats.played || 0}</td>
+                              <td style={styles.td}>{teamStats.win || 0}</td>
+                              <td style={styles.td}>{teamStats.loss || 0}</td>
+                              <td style={styles.td}>{teamStats.gf || 0}</td>
+                              <td style={styles.td}>{teamStats.ga || 0}</td>
+                              <td style={styles.td}>{teamStats.gd || 0}</td>
+                              <td style={styles.td}>{teamStats.points || 0}</td>
+                            </>
+                          )}
+                          {activeSport === 'Basketball' && (
+                            <>
+                              <td style={styles.td}>{teamStats.played || 0}</td>
+                              <td style={styles.td}>{teamStats.win || 0}</td>
+                              <td style={styles.td}>{teamStats.loss || 0}</td>
+                              <td style={styles.td}>{teamStats.gf || 0}</td>
+                              <td style={styles.td}>{teamStats.ga || 0}</td>
+                              <td style={styles.td}>{teamStats.gd || 0}</td>
+                              <td style={styles.td}>{teamStats.points || 0}</td>
+                            </>
+                          )}
+                          {(activeSport === 'Badminton Ganda Putra' || activeSport === 'Badminton Ganda Campuran') && (
+                            <td style={styles.td}>{Array.isArray(team.players) ? team.players.join(', ') : ''}</td>
+                          )}
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
