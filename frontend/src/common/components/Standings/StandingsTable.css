@@ -86,3 +86,48 @@
 .hoverRow {
   background-color: #e9ecef;
 }
+
+/* ...existing styles... */
+
+.responsive-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: max-content;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 900px) {
+  .container {
+    padding: 8px;
+  }
+  .header {
+    font-size: 1.2rem;
+  }
+  .th, .td {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+  .groupHeader {
+    font-size: 1rem;
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    font-size: 1rem;
+  }
+  .th, .td {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+  .groupHeader {
+    font-size: 0.95rem;
+    padding: 6px 8px;
+  }
+}

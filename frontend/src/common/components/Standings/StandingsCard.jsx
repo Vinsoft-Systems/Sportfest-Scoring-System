@@ -78,51 +78,54 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
           Object.entries(groupedTeams).map(([groupName, teams]) => (
             <div key={groupName} className="groupContainer">
               <h3 className="groupHeader">Group {groupName}</h3>
-              <table className="table">
-                <thead>
-                  <tr>
-                    {COLUMNS[activeSport].map((column, index) => (
-                      <th key={index} className="th">
-                        {column}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...teams]
-                    .sort((a, b) => {
-                      const statsA = stats[Number(a.value)] || {};
-                      const statsB = stats[Number(b.value)] || {};
-                      if ((statsB.points || 0) !== (statsA.points || 0)) {
-                        return (statsB.points || 0) - (statsA.points || 0);
-                      }
-                      if ((statsB.gf || 0) !== (statsA.gf || 0)) {
-                        return (statsB.gf || 0) - (statsA.gf || 0);
-                      }
-                      return (statsB.gd || 0) - (statsA.gd || 0);
-                    })
-                    .map((team, index) => {
-                      const isEven = index % 2 === 0;
-                      const teamStats = stats[Number(team.value)] || {};
-                      const rowClass = [
-                        "td",
-                        isEven ? "evenRow" : "",
-                        hoveredRow === (team.id || team.value || team.label) ? "hoverRow" : ""
-                      ].join(" ").trim();
-                      return (
-                        <StandingsTableRow
-                          team={team}
-                          teamStats={teamStats}
-                          index={index}
-                          rowClass={rowClass}
-                          hoveredRow={hoveredRow}
-                          setHoveredRow={setHoveredRow}
-                          activeSport={activeSport}
-                        />
-                      );
-                    })}
-                </tbody>
-              </table>
+              <div className="responsive-table-wrapper">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      {COLUMNS[activeSport].map((column, index) => (
+                        <th key={index} className="th">
+                          {column}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...teams]
+                      .sort((a, b) => {
+                        const statsA = stats[Number(a.value)] || {};
+                        const statsB = stats[Number(b.value)] || {};
+                        if ((statsB.points || 0) !== (statsA.points || 0)) {
+                          return (statsB.points || 0) - (statsA.points || 0);
+                        }
+                        if ((statsB.gf || 0) !== (statsA.gf || 0)) {
+                          return (statsB.gf || 0) - (statsA.gf || 0);
+                        }
+                        return (statsB.gd || 0) - (statsA.gd || 0);
+                      })
+                      .map((team, index) => {
+                        const isEven = index % 2 === 0;
+                        const teamStats = stats[Number(team.value)] || {};
+                        const rowClass = [
+                          "td",
+                          isEven ? "evenRow" : "",
+                          hoveredRow === (team.id || team.value || team.label) ? "hoverRow" : ""
+                        ].join(" ").trim();
+                        return (
+                          <StandingsTableRow
+                            key={team.id || team.value || team.label}
+                            team={team}
+                            teamStats={teamStats}
+                            index={index}
+                            rowClass={rowClass}
+                            hoveredRow={hoveredRow}
+                            setHoveredRow={setHoveredRow}
+                            activeSport={activeSport}
+                          />
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           ))
         )}

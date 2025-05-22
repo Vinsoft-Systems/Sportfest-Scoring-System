@@ -69,8 +69,8 @@ function calculateStats(teams, matches, activeSport) {
           stats[teamBId].pd = stats[teamBId].pf - stats[teamBId].pa;
         }
 
-        // Volleyball: win = 3 pts, draw = 1 pt, loss = 0 pts
-        // Badminton: win = 1 pt, draw = 1 pt, loss = 0 pts
+        // Volley: win = 3 pts, draw = 1 pt, loss = 0 pts (kalo menurut buklet)
+        // Badminton: win = 1 pt, loss = 0 pts (badmin gk tau kalo menang brp poin, assume 1)
         let winPoints = 3;
         if (
           activeSport === 'Badminton Ganda Putra' ||
@@ -92,7 +92,7 @@ function calculateStats(teams, matches, activeSport) {
           }
           if (stats[teamAId]) stats[teamAId].loss += 1;
         } else {
-          // Draw: both teams get +1 draw and +1 point
+          // Draw: beide teams dapet 1 point
           if (stats[teamAId]) {
             stats[teamAId].draw += 1;
             stats[teamAId].points += 1;
