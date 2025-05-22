@@ -21,14 +21,14 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeSport, setActiveSport] = useState(sportBranch);
-  const { getEntry } = useApi();
 
   useEffect(() => {
     setLoading(true);
     fetch(`/api/v1/team/teams_by_competition/1/${activeSport}`)
       .then(res => res.json())
       .then(data => {
-        setTeams(data || []);
+        // If your API returns { result: [...] }
+        setTeams(data.result || data || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -37,13 +37,10 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
   // Group teams by group name (A, B, C, etc.)
   const groupedTeams = useMemo(() => {
     const groups = {};
-    teams.forEach((team, idx) => {
-      const groupName = team.group?.name || 'No Group';
+    teams.forEach((team) => {
+      const groupName = team.group || 'No Group';
       if (!groups[groupName]) groups[groupName] = [];
-      groups[groupName].push({
-        ...team,
-        rank: groups[groupName].length + 1,
-      });
+      groups[groupName].push(team);
     });
 
     // Sort groups by GROUP_LABELS order if available
@@ -144,7 +141,7 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
     <div style={styles.container}>
       <h1 style={styles.header}>Sports Competition Standings</h1>
       <div style={styles.sportSelector}>
-        {sportBranches.map((sport) => (
+        {Object.keys(GROUP_LABELS).map((sport) => (
           <button
             key={sport}
             style={activeSport === sport ? styles.activeButton : styles.button}
@@ -177,20 +174,18 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
                 <tbody>
                   {teams.map((team, index) => {
                     const isEven = index % 2 === 0;
-                    const isHovered = hoveredRow === (team.id || team.value);
+                    const isHovered = false; // You can keep your hover logic if you want
                     return (
                       <tr
-                        key={team.id || team.value}
+                        key={team.id || team.label}
                         style={{
                           ...styles.td,
                           ...(isEven ? styles.evenRow : {}),
                           ...(isHovered ? styles.hoverRow : {}),
                           transition: 'background-color 0.2s ease',
                         }}
-                        onMouseEnter={() => setHoveredRow(team.id || team.value)}
-                        onMouseLeave={() => setHoveredRow(null)}
                       >
-                        <td style={styles.td}>{team.rank}</td>
+                        <td style={styles.td}>{index + 1}</td>
                         <td style={styles.td}>{team.label}</td>
                         {activeSport === 'Futsal' ? (
                           <>
