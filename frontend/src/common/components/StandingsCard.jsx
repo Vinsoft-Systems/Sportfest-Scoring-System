@@ -62,26 +62,45 @@ function calculateStats(teams, matches, activeSport) {
         stats[teamBId].gd = stats[teamBId].gf - stats[teamBId].ga;
       }
 
-      if (scoreA > scoreB) {
-        if (stats[teamAId]) {
-          stats[teamAId].win += 1;
-          stats[teamAId].points += 3;
+      if (activeSport === 'Basketball') {
+        // kalo menurut booklet, menang = 1, kalah = 0
+        //gw assume gk ada draw
+        if (scoreA > scoreB) {
+          if (stats[teamAId]) {
+            stats[teamAId].win += 1;
+            stats[teamAId].points += 1;
+          }
+          if (stats[teamBId]) stats[teamBId].loss += 1;
+        } else if (scoreA < scoreB) {
+          if (stats[teamBId]) {
+            stats[teamBId].win += 1;
+            stats[teamBId].points += 1;
+          }
+          if (stats[teamAId]) stats[teamAId].loss += 1;
         }
-        if (stats[teamBId]) stats[teamBId].loss += 1;
-      } else if (scoreA < scoreB) {
-        if (stats[teamBId]) {
-          stats[teamBId].win += 1;
-          stats[teamBId].points += 3;
-        }
-        if (stats[teamAId]) stats[teamAId].loss += 1;
       } else {
-        if (stats[teamAId]) {
-          stats[teamAId].draw += 1;
-          stats[teamAId].points += 1;
-        }
-        if (stats[teamBId]) {
-          stats[teamBId].draw += 1;
-          stats[teamBId].points += 1;
+        // Futsal/Volleyball: Win = 3, Draw = 1, Loss = 0
+        if (scoreA > scoreB) {
+          if (stats[teamAId]) {
+            stats[teamAId].win += 1;
+            stats[teamAId].points += 3;
+          }
+          if (stats[teamBId]) stats[teamBId].loss += 1;
+        } else if (scoreA < scoreB) {
+          if (stats[teamBId]) {
+            stats[teamBId].win += 1;
+            stats[teamBId].points += 3;
+          }
+          if (stats[teamAId]) stats[teamAId].loss += 1;
+        } else {
+          if (stats[teamAId]) {
+            stats[teamAId].draw += 1;
+            stats[teamAId].points += 1;
+          }
+          if (stats[teamBId]) {
+            stats[teamBId].draw += 1;
+            stats[teamBId].points += 1;
+          }
         }
       }
     });
