@@ -7,6 +7,7 @@ from fastapi_rtk import (
     permission_name,
     protect,
 )
+from fastapi_rtk.decorators import priority
 
 from app.models import Competition, Match, Team, Group, Bracket
 from app.main import toolkit
@@ -51,9 +52,29 @@ class TeamAPI(ModelRestApi):
         "group"
     ]
 
+    def get(self):
+        priority(4)(self.get_headless)
+        permission_name("get")(self.get_headless)
+        expose(
+            "/{id}",
+            methods=["GET"],
+            name="Get item",
+            description="Get a single item.",
+            response_model=self.show_return_schema,
+        )(self.get_headless)
+
+    def get_list(self):
+        priority(5)(self.get_list_headless)
+        permission_name("get")(self.get_list_headless)
+        expose(
+            "/",
+            methods=["GET"],
+            name="Get items",
+            description="Get a list of items.",
+            response_model=self.list_return_schema,
+        )(self.get_list_headless)
+
     @expose("/teams_by_competition/{comp_id}/{sport_branch}", methods=["GET"])
-    @protect()
-    @permission_name("get")
     async def get_teams_by_competition(self, comp_id: int, sport_branch: str):
         """Get teams by competition ID and sport branch."""
         async with db.session() as session:
@@ -115,6 +136,27 @@ class MatchAPI(ModelRestApi):
         "date",
         "group",
     ]
+    def get(self):
+        priority(4)(self.get_headless)
+        permission_name("get")(self.get_headless)
+        expose(
+            "/{id}",
+            methods=["GET"],
+            name="Get item",
+            description="Get a single item.",
+            response_model=self.show_return_schema,
+        )(self.get_headless)
+
+    def get_list(self):
+        priority(5)(self.get_list_headless)
+        permission_name("get")(self.get_list_headless)
+        expose(
+            "/",
+            methods=["GET"],
+            name="Get items",
+            description="Get a list of items.",
+            response_model=self.list_return_schema,
+        )(self.get_list_headless)
 
 class GroupAPI(ModelRestApi):
     datamodel = SQLAInterface(Group)

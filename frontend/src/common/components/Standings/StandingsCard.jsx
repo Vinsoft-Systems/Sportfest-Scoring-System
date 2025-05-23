@@ -3,6 +3,8 @@ import { ApiProvider, useApi } from 'fastapi-rtk';
 import './StandingsTable.css';
 import calculateStats from './CalculateStats.jsx';
 import StandingsTableRow from './StandingsTableRow.jsx';
+import useSize from "@/hooks/useSize.jsx";
+import { Select } from '@mantine/core';
 
 const COLUMNS = {
   Futsal: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'GA', 'GF', 'GD', 'Points'],
@@ -17,6 +19,7 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeSport, setActiveSport] = useState(sportBranch);
+  const {isMobile} = useSize()
 
   useEffect(() => {
     setLoading(true);
@@ -80,7 +83,14 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
     <div className="container">
       <h1 className="header">Sports Competition Standings</h1>
       <div className="sportSelector">
-        {sportBranches.map((sport) => (
+        { isMobile ? <Select
+          label="Your favorite library"
+          placeholder="Pick value"
+          data={sportBranches}
+          value={activeSport}
+          onChange={setActiveSport}
+            />
+              : sportBranches.map((sport) => (
           <button
             key={sport}
             className={activeSport === sport ? "activeButton" : "button"}
