@@ -8,11 +8,10 @@ import AdminCompetitions from '@/features/pages/admin/AdminCompetitions.jsx';
 import { IconAwardFilled } from '@tabler/icons-react';
 import Matches from '@/features/pages/Matches.jsx';
 import Match from '@/features/pages/Match.jsx';
-import Standings from './common/components/Standings/StandingsCard.jsx';
+import Results from './common/components/Standings/StandingsCard.jsx';
 import { IconScoreboard } from '@tabler/icons-react';
 import AdminGroups from '@/features/pages/admin/AdminGroups.jsx';
-import AdminBrackets from '@/features/pages/admin/AdminBrackets.jsx';
-import Knockout from '@/common/components/Knockout/KnockoutCard.jsx';
+import Knockout from './common/components/Knockout/KnockoutCard.jsx';
 
 export const BASE_PATH = new URL(document.baseURI).pathname;
 
@@ -49,7 +48,7 @@ export const routes = {
     path: '/standings',
     name: 'Standings',
     Icon: IconScoreboard,
-    Element: Standings,
+    Element: Results,
     isPublic: true,
   },
   knockout: {
@@ -93,13 +92,6 @@ export const routes = {
     name: 'Groups',
     Element: AdminGroups,
   },
-  adminBrackets: {
-    path: '/admin/brackets',
-    Icon: IconPuzzleFilled,
-    resource_name: 'bracket',
-    name: 'Brackets',
-    Element: AdminBrackets,
-  }
 };
 
 export const security = {
