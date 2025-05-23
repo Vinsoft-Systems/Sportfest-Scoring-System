@@ -2,7 +2,7 @@ import useSize from '@/hooks/useSize';
 import { AppShell, AppShellHeader, rem } from '@mantine/core';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar/Navbar';
-import { HeaderLogo } from '../components/HeaderLogo/HeaderLogo';
+import {HeaderLogo} from "@/common/components/HeaderLogo/HeaderLogo.jsx";
 
 export default function MainFrame({ showNavbar }) {
   const { getPageHeight, navbarWidth, padding, isNavbarOpened, toggleNavbar } = useSize();

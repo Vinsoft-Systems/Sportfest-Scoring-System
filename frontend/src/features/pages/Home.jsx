@@ -15,7 +15,6 @@ function MatchData() {
     const matchId = match.id || (matches && matches.ids && matches.ids[matches.result.indexOf(match)]);
 
     if (matchId) {
-      console.log('Navigating to match ID:', matchId);
       navigate(`/match/${matchId}`);
     } else {
       console.error('Cannot navigate: Match ID not found', match);
@@ -25,7 +24,6 @@ function MatchData() {
   useEffect(() => {
     getEntry('/')
       .then((data) => {
-        console.log('Match data:', data);
         setMatches(data);
       })
       .catch((err) => {

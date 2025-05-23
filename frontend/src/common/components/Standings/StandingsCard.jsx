@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useApi, ApiProvider } from 'fastapi-rtk';
+import { ApiProvider } from 'fastapi-rtk';
 import './StandingsTable.css';
 import calculateStats from './CalculateStats.jsx';
 import StandingsTableRow from './StandingsTableRow.jsx';

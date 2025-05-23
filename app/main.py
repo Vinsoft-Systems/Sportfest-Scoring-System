@@ -30,10 +30,12 @@ app.add_middleware(
 )
 
 toolkit = FastAPIReactToolkit(
-    create_tables=True,
+    # create_tables=False,
+    upgrade_db=True,
     on_startup=on_startup,
 )
 toolkit.config.from_pyfile("./app/config.py")
+# toolkit.config.from_pyfile("./config.py", silent=True)
 toolkit.initialize(app)
 
 from .apis import *  # noqa: E402, F403

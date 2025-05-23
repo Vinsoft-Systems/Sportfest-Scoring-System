@@ -8,7 +8,7 @@ from fastapi_rtk import (
     protect,
 )
 
-from app.models import Competition, Match, Team, Group
+from app.models import Competition, Match, Team, Group, Bracket
 from app.main import toolkit
 
 
@@ -129,7 +129,26 @@ class GroupAPI(ModelRestApi):
         "name",
     ]
 
+class BracketAPI(ModelRestApi):
+    datamodel = SQLAInterface(Bracket)
+    add_columns = [
+        "competition",
+        "sport_branch",
+        "knockout_stage_config",
+    ]
+    list_columns = [
+        "competition",
+        "sport_branch",
+        "knockout_stage_config",
+    ]
+    edit_columns = [
+        "competition",
+        "sport_branch",
+        "knockout_stage_config",
+    ]
+
 toolkit.add_api(CompetitionAPI)
 toolkit.add_api(TeamAPI)
 toolkit.add_api(MatchAPI)
 toolkit.add_api(GroupAPI)
+toolkit.add_api(BracketAPI)
