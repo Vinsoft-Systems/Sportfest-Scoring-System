@@ -31,7 +31,7 @@ export default function MatchCard({ match, onClick }) {
         onClick={onClick}
         style={{ cursor: 'pointer' }}
       >
-        <Flex direction="row" align="center" pb={{ base: 'xs', sm: 'md' }} justify={'space-between'} withBorder>
+        <Flex direction="row" align="center" pb={{ base: 'xs', sm: 'md' }} justify={'space-between'}>
           <Flex gap="sm">
             <Text size="10px">{formatDate(date)}</Text>
           </Flex>
@@ -59,7 +59,7 @@ export default function MatchCard({ match, onClick }) {
         <Grid pb="md" justify="center" align="center">
           <Grid.Col span="auto">
             <Text fw={600} size="sm" ta="center">
-              {team_a.name}
+              {team_a?.name || 'TBD'}
             </Text>
           </Grid.Col>
           <Grid.Col span="auto">
@@ -70,7 +70,7 @@ export default function MatchCard({ match, onClick }) {
           </Grid.Col>
           <Grid.Col span="auto">
             <Text fw={600} size="sm" ta="center">
-              {team_b.name}
+              {team_b?.name || 'TBD'}
             </Text>
           </Grid.Col>
         </Grid>
