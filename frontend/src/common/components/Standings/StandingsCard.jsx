@@ -1,13 +1,13 @@
 import { useEffect, useState, useMemo } from 'react';
-import { ApiProvider } from 'fastapi-rtk';
+import { ApiProvider, useApi } from 'fastapi-rtk';
 import './StandingsTable.css';
 import calculateStats from './CalculateStats.jsx';
 import StandingsTableRow from './StandingsTableRow.jsx';
 
 const COLUMNS = {
   Futsal: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'GA', 'GF', 'GD', 'Points'],
-  Volleyball: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
-  Basketball: ['Rank', 'Team', 'Matches Played', 'Win', 'Lose', 'PF', 'PA', 'PD', 'Points'],
+  Voli: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
+  Basket: ['Rank', 'Team', 'Matches Played', 'Win', 'Lose', 'PF', 'PA', 'PD', 'Points'],
   'Badminton Ganda Putra': ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
   'Badminton Ganda Campuran': ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
 };
@@ -20,21 +20,43 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
 
   useEffect(() => {
     setLoading(true);
+    
     fetch(`/api/v1/team/teams_by_competition/1/${activeSport}`)
-      .then(res => res.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+      })
       .then(data => {
         setTeams(data.result || data || []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(error => {
+        console.error('Error fetching teams:', error);
+        setTeams([]);
+        setLoading(false);
+      });
   }, [activeSport]);
 
   useEffect(() => {
     const fetchMatches = () => {
       fetch(`/api/v1/match/?competition_id=1&sport_branch=${encodeURIComponent(activeSport)}`)
-        .then(res => res.json())
-        .then(data => setMatches(data.result || data || []));
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          setMatches(data.result || data || []);
+        })
+        .catch(error => {
+          console.error('Error fetching matches:', error);
+          setMatches([]);
+        });
     };
+    
     fetchMatches();
     const interval = setInterval(fetchMatches, 5000);
     return () => clearInterval(interval);
@@ -134,12 +156,9 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
   );
 }
 
+// Remove ApiProvider since we're using direct fetch
 function Standings() {
-  return (
-    <ApiProvider resource_name="team">
-      <StandingsCard />
-    </ApiProvider>
-  );
+  return <StandingsCard />;
 }
 
 export default Standings;

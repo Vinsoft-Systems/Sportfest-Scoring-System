@@ -1,10 +1,10 @@
 import { Flex, Text, Image, Title, Tooltip } from '@mantine/core';
 import classes from './HeaderLogo.module.css';
 
-import indoexpressLogo from '../../assets/indoexpress.PNG';
-import warindoLogo from '../../assets/warindo.webp';
-import ppiJermanLogo from '../../assets/ppijerman.png';
-import merpatiLogo from '../../assets/merpati.jpg';
+import indoexpressLogo from '../../../../public/static/indoexpress.PNG';
+import warindoLogo from '../../../../public/static/warindo.webp';
+import ppiJermanLogo from '../../../../public/static/ppijerman.png';
+import merpatiLogo from '../../../../public/static/merpati.jpg';
 
 export function HeaderLogo() {
 
