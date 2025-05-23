@@ -1,4 +1,4 @@
-import { IconHome, IconShirtFilled, IconCampfireFilled, IconPuzzleFilled } from '@tabler/icons-react';
+import { IconHome, IconShirtFilled, IconCampfireFilled, IconPuzzleFilled, IconTrophyFilled } from '@tabler/icons-react';
 import SecurityProvider from './features/auth/security/SecurityProvider';
 import { Home } from './features/pages';
 import AdminHome from '@/features/pages/admin/AdminHome.jsx';
@@ -54,7 +54,7 @@ export const routes = {
   knockout: {
     path: '/knockout',
     name: 'Knockout',
-    Icon: IconScoreboard,
+    Icon: IconTrophyFilled,
     Element: Knockout,
     isPublic: true,
   },
