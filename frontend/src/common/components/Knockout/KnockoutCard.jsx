@@ -3,6 +3,8 @@ import { ApiProvider, useApi } from 'fastapi-rtk';
 import './KnockoutTable.css';
 import MatchCard from "@/common/components/Match/MatchCard.jsx";
 import {useNavigate} from "react-router-dom";
+import useSize from "@/hooks/useSize.jsx";
+import { Select } from '@mantine/core';
 
 const COLUMNS = {
   Futsal: [],
@@ -17,6 +19,8 @@ const roundsOrder = ["quarterfinal", "semifinal", "final"];
 function MatchCardWrapper({ matchId, onClick }) {
   const [matchData, setMatchData] = useState(null);
   const [error, setError] = useState(false);
+  const {isMobile} = useSize()
+
 
   useEffect(() => {
     if (!matchId) return;
@@ -78,7 +82,14 @@ function KnockoutCard({ sportBranch = 'Futsal' }) {
     <div className="container">
       <h1 className="header">Sports Competition Knockout</h1>
       <div className="sportSelector">
-        {sportBranches.map((sport) => (
+        { isMobile ? <Select
+          label="Your favorite library"
+          placeholder="Pick value"
+          data={sportBranches}
+          value={activeSport}
+          onChange={setActiveSport}
+            />
+              : sportBranches.map((sport) => (
           <button
             key={sport}
             className={activeSport === sport ? "activeButton" : "button"}
