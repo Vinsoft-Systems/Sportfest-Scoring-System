@@ -17,19 +17,16 @@ function MatchContent() {
     if (matchId) {
       getEntry(matchId)
         .then((data) => {
-          console.log('Match data:', data);
           if (data && data.result) {
             setMatch(data.result);
 
             if (data.result.team_a && Object.keys(data.result.team_a).length > 1) {
-              console.log('Using existing team A data:', data.result.team_a);
               setTeamADetails(data.result.team_a);
             } else if (data.result.team_a_id) {
               fetchTeamDetails(data.result.team_a_id, 'A');
             }
 
             if (data.result.team_b && Object.keys(data.result.team_b).length > 1) {
-              console.log('Using existing team B data:', data.result.team_b);
               setTeamBDetails(data.result.team_b);
             } else if (data.result.team_b_id) {
               fetchTeamDetails(data.result.team_b_id, 'B');
@@ -50,14 +47,11 @@ function MatchContent() {
       if (!response.ok) throw new Error(`Failed to fetch team ${teamType} details`);
 
       const data = await response.json();
-      console.log(`Team ${teamType} fetched data:`, data);
 
       if (teamType === 'A') {
         setTeamADetails(data.result);
-        console.log('Set TeamA details:', data.result);
       } else {
         setTeamBDetails(data.result);
-        console.log('Set TeamB details:', data.result);
       }
     } catch (err) {
       console.error(`Error fetching team ${teamType}:`, err);

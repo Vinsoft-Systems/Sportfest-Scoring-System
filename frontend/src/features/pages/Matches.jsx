@@ -31,7 +31,6 @@ function MatchesContent() {
           });
 
           setOrganizedMatches(matchesByDate);
-          console.log('Organized matches with IDs:', matchesByDate);
         }
       })
       .catch((err) => {
