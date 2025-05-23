@@ -19,8 +19,6 @@ const roundsOrder = ["quarterfinal", "semifinal", "final"];
 function MatchCardWrapper({ matchId, onClick }) {
   const [matchData, setMatchData] = useState(null);
   const [error, setError] = useState(false);
-  const {isMobile} = useSize()
-
 
   useEffect(() => {
     if (!matchId) return;
@@ -55,6 +53,7 @@ function KnockoutCard({ sportBranch = 'Futsal' }) {
   const navigate = useNavigate();
   const [activeSport, setActiveSport] = useState(sportBranch);
   const { data, setQueryParams, loading } = useApi();
+  const {isMobile} = useSize()
 
   useEffect(() => {
     setQueryParams({
