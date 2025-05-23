@@ -6,8 +6,8 @@ import StandingsTableRow from './StandingsTableRow.jsx';
 
 const COLUMNS = {
   Futsal: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'GA', 'GF', 'GD', 'Points'],
-  Volleyball: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
-  Basketball: ['Rank', 'Team', 'Matches Played', 'Win', 'Lose', 'PF', 'PA', 'PD', 'Points'],
+  Voli: ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
+  Basket: ['Rank', 'Team', 'Matches Played', 'Win', 'Lose', 'PF', 'PA', 'PD', 'Points'],
   'Badminton Ganda Putra': ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
   'Badminton Ganda Campuran': ['Rank', 'Team', 'Matches Played', 'Win', 'Draw', 'Lose', 'SW', 'SL', 'SD', 'PF', 'PA', 'PD', 'Points'],
 };

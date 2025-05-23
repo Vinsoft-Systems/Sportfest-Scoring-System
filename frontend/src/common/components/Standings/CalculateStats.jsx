@@ -20,8 +20,7 @@ function calculateStats(teams, matches, activeSport) {
     };
   });
 
-  matches
-    .filter(match => match.status === 'In Progress' || match.status === 'Completed')
+  matches?.filter(match => match.status === 'In Progress' || match.status === 'Completed')
     .forEach(match => {
       const { team_a, team_b, score_list } = match;
       if (!team_a || !team_b || !score_list || score_list.length === 0) return;
@@ -30,7 +29,7 @@ function calculateStats(teams, matches, activeSport) {
       const teamBId = Number(team_b.id);
 
       if (
-        activeSport === 'Volleyball' ||
+        activeSport === 'Voli' ||
         activeSport === 'Badminton Ganda Putra' ||
         activeSport === 'Badminton Ganda Campuran'
       ) {
@@ -102,7 +101,7 @@ function calculateStats(teams, matches, activeSport) {
             stats[teamBId].points += 1;
           }
         }
-      } else if (activeSport === 'Basketball') {
+      } else if (activeSport === 'Basket') {
         const [scoreA, scoreB] = score_list[score_list.length - 1]
           .split(/[-:]/)
           .map(Number);
