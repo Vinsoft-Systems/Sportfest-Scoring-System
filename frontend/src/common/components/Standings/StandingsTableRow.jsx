@@ -31,7 +31,7 @@ export default function StandingsTableRow({
           <td className="td">{teamStats.points || 0}</td>
         </>
       )}
-      {activeSport === 'Volleyball' && (
+      {activeSport === 'Voli' && (
         <>
           <td className="td">{teamStats.played || 0}</td>
           <td className="td">{teamStats.win || 0}</td>
@@ -46,7 +46,7 @@ export default function StandingsTableRow({
           <td className="td">{teamStats.points || 0}</td>
         </>
       )}
-      {activeSport === 'Basketball' && (
+      {activeSport === 'Basket' && (
         <>
           <td className="td">{teamStats.played || 0}</td>
           <td className="td">{teamStats.win || 0}</td>
