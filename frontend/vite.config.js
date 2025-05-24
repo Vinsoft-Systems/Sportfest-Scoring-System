@@ -13,20 +13,20 @@ export default defineConfig({
     cors: false,
     proxy: {
       '/api': {
-        target: 'https://vinstonsalim.site',
+        target: 'http://127.0.0.1:8080',
         changeOrigin: true,
 
         secure: false,
         ws: true,
       },
       '/socket.io': {
-        target: 'https://vinstonsalim.site',
+        target: 'http://127.0.0.1:8080',
         changeOrigin: true,
         secure: false,
         ws: true,
       },
       '/server-config.js': {
-        target: 'https://vinstonsalim.site',
+        target: 'http://127.0.0.1:8080',
         changeOrigin: true,
         secure: false,
         ws: true,
