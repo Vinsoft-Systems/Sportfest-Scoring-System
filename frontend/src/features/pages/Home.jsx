@@ -7,9 +7,8 @@ import MatchCard from '@/common/components/Match/MatchCard';
 
 function MatchData() {
   const navigate = useNavigate();
-  const { getEntry, loading: isLoading } = useApi();
+  const { data, loading: isLoading } = useApi();
   const [matches, setMatches] = useState(null);
-  const [error, setError] = useState(null);
 
   const onClickMatch = (match) => {
     const matchId = match.id || (matches && matches.ids && matches.ids[matches.result.indexOf(match)]);
@@ -22,18 +21,10 @@ function MatchData() {
   };
 
   useEffect(() => {
-    getEntry('/')
-      .then((data) => {
-        setMatches(data);
-      })
-      .catch((err) => {
-        console.error('Error fetching matches:', err);
-        setError(err);
-      });
-  }, [getEntry]);
+      setMatches(data);
+  }, [data]);
 
   if (isLoading) return <p>Loading matches...</p>;
-  if (error) return <p>Error fetching matches: {error.message}</p>;
   if (!matches) return <p>No match data available</p>;
 
   return (
@@ -63,7 +54,7 @@ function MatchData() {
 
 export default function Home() {
   return (
-    <ApiProvider resource_name="match">
+    <ApiProvider resource_name="match" initialQueryParams={{page_size:1000}}>
       <Center>
         <MatchData />
       </Center>
