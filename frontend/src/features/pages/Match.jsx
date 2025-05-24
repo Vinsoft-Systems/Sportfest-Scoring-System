@@ -67,7 +67,7 @@ function MatchContent() {
     const sportBranch = match.sport_branch.toLowerCase();
 
     // Check if sport branch is Badminton or Volleyball
-    return sportBranch.includes('badminton') || sportBranch.includes('volleyball');
+    return sportBranch.includes('badminton');
   };
 
   if (loading || isLoadingTeams) {
