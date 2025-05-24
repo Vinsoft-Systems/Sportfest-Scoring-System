@@ -24,7 +24,7 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
   useEffect(() => {
     setLoading(true);
     
-    fetch(`/api/v1/team/teams_by_competition/1/${activeSport}`)
+    fetch(`/api/v1/team/teams_by_competition/1/${activeSport}?page_size=1000`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -44,7 +44,7 @@ function StandingsCard({ sportBranch = 'Futsal' }) {
 
   useEffect(() => {
     const fetchMatches = () => {
-      fetch(`/api/v1/match/?competition_id=1&sport_branch=${encodeURIComponent(activeSport)}`)
+      fetch(`/api/v1/match/?competition_id=1&sport_branch=${encodeURIComponent(activeSport)}&page_size=1000`)
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
