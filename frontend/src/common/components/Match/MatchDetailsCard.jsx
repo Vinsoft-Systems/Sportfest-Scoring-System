@@ -129,30 +129,6 @@ export default function MatchDetailsCard({ match, teamADetails, teamBDetails, wi
                 </Grid.Col>
               ))}
             </Grid>
-
-            {withBO3 && getIndividualScores().length > 0 && (
-              <Flex direction="column" gap={4} mt={0} wrap="wrap" justify="center">
-                {getIndividualScores().map((score, index) => (
-                  <Text
-                    key={index}
-                    size="10px"
-                    c="dimmed"
-                    fw={400}
-                    style={{
-                      display: 'inline-block',
-                      padding: '0px 2px',
-                      border: '1px solid #e9ecef',
-                      borderRadius: '3px',
-                      backgroundColor: '#f8f9fa',
-                      lineHeight: 1.3, // Tighter line height
-                      margin: '0 1px',
-                    }}
-                  >
-                    {score}
-                  </Text>
-                ))}
-              </Flex>
-            )}
           </Flex>
 
           <Stack align="center" spacing={{ base: 'xs', sm: 'sm' }} justify="center" h="100%">
